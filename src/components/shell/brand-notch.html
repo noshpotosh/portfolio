@@ -1,0 +1,37 @@
+<header id="top-left-notch" class="shell__brand brandNotch">
+    <a class="brandNotch__link" href="#home" aria-label="Noah Stewart — home">
+        <img
+            class="brandNotch__logo"
+            src="./assets/site-logo-recessed.png"
+            width="1774"
+            height="887"
+            alt="NS"
+        />
+    </a>
+</header>
+
+<style>
+    .brandNotch {
+        padding: 6px;
+        border: 1px solid transparent;
+        color: var(--color-ink);
+        min-width: 0;
+        overflow-wrap: anywhere;
+
+        display: flex;
+        align-items: center;
+    }
+
+    .brandNotch__link {
+        display: block;
+        width: clamp(3rem, min(15vw, 20dvh), 7.5rem);
+        max-width: 100%;
+        margin-top: 0.375rem;
+    }
+
+    .brandNotch__logo {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+</style>

@@ -1,0 +1,69 @@
+<aside
+    id="top-right-notch"
+    class="shell__speaker speakerNotch stack"
+    aria-label="Handheld details"
+>
+    <div class="speakerNotch__grille cluster" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="systemControl systemControl--power stack" aria-hidden="true">
+        <span class="systemControl__button"></span>
+        <small class="systemControl__label cluster"><span class="speakerNotch__powerLight"></span>POWER</small>
+    </div>
+</aside>
+
+<style>
+    .speakerNotch {
+        padding: 6px;
+        border: 1px solid transparent;
+        color: var(--color-ink);
+        min-width: 0;
+        overflow-wrap: anywhere;
+
+        align-items: center;
+        justify-content: center;
+        --stack-space: clamp(var(--space-xs), 2dvh, var(--space-lg));
+    }
+
+    .speakerNotch__grille {
+        flex-wrap: nowrap;
+        align-items: stretch;
+        --cluster-space: clamp(var(--space-xs), 1vw, var(--space-sm));
+        padding: var(--space-xs);
+        transform: skewY(-12deg);
+    }
+
+    .speakerNotch__grille span {
+        width: clamp(5px, 1vw, 7px);
+        height: clamp(16px, 4dvh, 30px);
+        border-radius: 4px;
+        background: var(--color-bevel-shadow);
+        box-shadow:
+            inset 2px 2px 2px var(--color-ink),
+            1px 1px 0 var(--color-bevel-light);
+    }
+
+    .systemControl--power {
+        --system-button-width: 2.5rem;
+        --system-button-background: linear-gradient(
+            var(--color-muted),
+            var(--color-ink)
+        );
+    }
+
+    .speakerNotch__powerLight {
+        width: 0.35rem;
+        height: 0.35rem;
+        border-radius: 50%;
+        background: #c5e99a;
+        box-shadow:
+            0 0 4px #c5e99a80,
+            0 0 0 1px var(--color-bevel-shadow);
+    }
+</style>

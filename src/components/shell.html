@@ -1,1 +1,461 @@
-<main><slot></slot></main>
+<div class="shell">
+    <cf-include src="./components/shell/brand-notch.html"></cf-include>
+    <cf-include src="./components/shell/speaker-notch.html"></cf-include>
+    <cf-include src="./components/shell/left-rail.html"></cf-include>
+
+    <main
+        id="main-content"
+        class="shell__screen shellScreen"
+        aria-label="Portfolio content"
+    >
+        <div class="shellScreen__frame">
+            <div class="shellScreen__body">
+                <slot><p role="status">No page content supplied.</p></slot>
+            </div>
+        </div>
+    </main>
+
+    <cf-include src="./components/shell/bottom-rail.html"></cf-include>
+</div>
+
+<style>
+    /* Console sizing, outline geometry, and the recessed screen frame. */
+    /* Tune shell dimensions here; the SVG finish reads these same shape controls. */
+    .shell {
+        --width: 100rem;
+        --height: 90dvh;
+        --content-gap: clamp(var(--space-md), 1.3vw, 1.25rem);
+        --tab-width: clamp(12rem, 22vw, 19rem);
+        --fitted-tab: min(var(--tab-width), 25%);
+        --top-line: 7rem;
+        --top-rail-height: 2.75rem;
+        --left-tab-height: 4.5rem;
+        --right-tab-height: 7rem;
+        --left-cut: 2.25rem;
+        --side-cut: clamp(14rem, 20vw, 17rem);
+        --bottom-cut: 2.5rem;
+        --bottom-controls-height: 7rem;
+        --bottom-inset: 18%;
+        --tab-bevel: 24px;
+        --bottom-bevel: 24px;
+        --tab-slope-width: 48px;
+        --recess-color: var(--color-ink);
+        --rail-shadow-color: var(--color-shadow);
+        --rail-shadow-spread: 3px;
+        --rail-shadow-blur: 8px;
+        --rail-shadow-x: 4px;
+        --rail-shadow-y: 7px;
+        --rail-highlight-color: var(--color-rail-highlight);
+        --rail-highlight-width: 2px;
+        --shell-light-angle: 125;
+        --shell-light-color: var(--color-shell-light);
+        --shell-color: var(--color-shell);
+        --shell-shade-color: var(--color-shell-shade);
+        --shell-border-width: 3;
+        --shell-border-color: var(--recess-color);
+        --shell-spacing-width: 1;
+        --shell-highlight-width: 2;
+        --shell-bevel-light: var(--color-bevel-light);
+        --shell-bevel-mid: var(--color-shell);
+        --shell-bevel-shadow: var(--color-bevel-shadow);
+        --shell-highlight-color: var(--color-paper);
+        --shell-highlight-shade: var(--color-shell-light);
+        --shell-sheen-opacity: 0.38;
+        --shell-gloss-opacity: 0.2;
+        --left-cut-start: calc(var(--top-line) + 20px);
+        --right-cut-start: calc(var(--top-line) + 40px);
+        --left-cut-bottom: var(--bottom-controls-height);
+        --right-cut-bottom: 8rem;
+        --left-cut-end: calc(100% - var(--left-cut-bottom));
+        --right-cut-end: calc(100% - var(--right-cut-bottom));
+        --rail-outline: polygon(
+            0 calc(var(--top-line) - var(--left-tab-height) + var(--tab-bevel)),
+            var(--tab-bevel) calc(var(--top-line) - var(--left-tab-height)),
+            var(--fitted-tab) calc(var(--top-line) - var(--top-rail-height)),
+            calc(var(--fitted-tab) + var(--tab-slope-width))
+                calc(var(--top-line) - var(--top-rail-height)),
+            calc(100% - var(--fitted-tab) - var(--tab-slope-width))
+                calc(var(--top-line) - var(--top-rail-height)),
+            calc(100% - var(--fitted-tab))
+                calc(var(--top-line) - var(--top-rail-height)),
+            calc(100% - var(--tab-bevel))
+                calc(var(--top-line) - var(--right-tab-height)),
+            100%
+                calc(
+                    var(--top-line) - var(--right-tab-height) + var(--tab-bevel)
+                ),
+            100% calc(100% - var(--bottom-bevel)),
+            calc(100% - var(--bottom-bevel)) 100%,
+            var(--bottom-bevel) 100%,
+            0 calc(100% - var(--bottom-bevel))
+        );
+        --shell-outline: polygon(
+            0 calc(var(--top-line) - var(--left-tab-height) + var(--tab-bevel)),
+            var(--tab-bevel) calc(var(--top-line) - var(--left-tab-height)),
+            var(--fitted-tab) calc(var(--top-line) - var(--left-tab-height)),
+            calc(var(--fitted-tab) + var(--tab-slope-width)) var(--top-line),
+            calc(100% - var(--fitted-tab) - var(--tab-slope-width))
+                var(--top-line),
+            calc(100% - var(--fitted-tab))
+                calc(var(--top-line) - var(--right-tab-height)),
+            calc(100% - var(--tab-bevel))
+                calc(var(--top-line) - var(--right-tab-height)),
+            100%
+                calc(
+                    var(--top-line) - var(--right-tab-height) + var(--tab-bevel)
+                ),
+            100% calc(var(--right-cut-start) - 20px),
+            calc(100% - var(--side-cut)) var(--right-cut-start),
+            calc(100% - var(--side-cut)) var(--right-cut-end),
+            100% calc(var(--right-cut-end) + 25px),
+            100% calc(100% - var(--bottom-bevel)),
+            calc(100% - var(--bottom-bevel)) 100%,
+            calc(100% - var(--bottom-inset)) 100%,
+            calc(100% - var(--bottom-inset) - 30px)
+                calc(100% - var(--bottom-cut)),
+            calc(var(--bottom-inset) + 30px) calc(100% - var(--bottom-cut)),
+            var(--bottom-inset) 100%,
+            var(--bottom-bevel) 100%,
+            0 calc(100% - var(--bottom-bevel)),
+            0 calc(var(--left-cut-end) + 18px),
+            var(--left-cut) var(--left-cut-end),
+            var(--left-cut) var(--left-cut-start),
+            0 calc(var(--top-line) + 10px)
+        );
+        position: relative;
+        isolation: isolate;
+        width: min(var(--width), 100%);
+        min-height: var(--height);
+        display: grid;
+        grid-template-columns: var(--left-cut) minmax(0, 1fr) var(--side-cut);
+        grid-template-rows:
+            var(--top-line)
+            calc(var(--right-cut-start) - var(--top-line))
+            minmax(0, 1fr)
+            calc(var(--right-cut-bottom) - var(--bottom-cut))
+            var(--bottom-cut);
+    }
+
+    .shell::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        pointer-events: none;
+        background: var(--recess-color);
+        clip-path: var(--rail-outline);
+    }
+
+    /* Region placement belongs to the shell; components own their contents. */
+    .shell__brand {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        align-self: end;
+        width: calc(var(--fitted-tab) - 32px);
+        margin: 0 16px 8px;
+        justify-self: start;
+        min-height: calc(var(--left-tab-height) - 16px);
+    }
+
+    .shell__speaker {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        align-self: end;
+        justify-self: end;
+        width: calc(var(--fitted-tab) - 32px);
+        min-height: calc(var(--right-tab-height) - 16px);
+        margin: 0 16px 8px;
+    }
+
+    .shell__top {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        align-self: end;
+        justify-self: center;
+        width: calc(
+            100% - var(--fitted-tab) - var(--fitted-tab) -
+                var(--tab-slope-width) - var(--tab-slope-width)
+        );
+        min-height: var(--top-rail-height);
+        margin: 0;
+    }
+
+    .shell__left {
+        grid-column: 1;
+        grid-row: 2 / 5;
+        margin: calc(var(--left-cut-start) - var(--top-line) + 8px) 1px
+            calc(var(--left-cut-bottom) - var(--bottom-cut) + 8px);
+    }
+
+    .shell__activity {
+        position: absolute;
+        inset: 0;
+        grid-column: 3 / 4;
+        grid-row: 3 / 4;
+        min-height: 0;
+        margin: 8px;
+        align-self: stretch;
+    }
+
+    .shell__bottom {
+        grid-column: 1 / -1;
+        grid-row: 5;
+        margin: 0 var(--bottom-inset);
+    }
+
+    .shell__screen {
+        grid-column: 2;
+        grid-row: 2 / 5;
+        margin: var(--content-gap);
+        margin-bottom: calc(var(--bottom-controls-height) - var(--bottom-cut));
+        align-self: stretch;
+    }
+
+    .shell__systemControls {
+        position: absolute;
+        transform: translateX(-50%);
+        left: 50%;
+        bottom: calc(var(--bottom-cut) + var(--space-lg));
+    }
+
+    .shell__dpad {
+        position: absolute;
+        left: calc(clamp(1.5rem, 4vw, 4rem) - 0.6rem);
+        bottom: 0.65rem;
+    }
+
+    .shell__buttons {
+        position: absolute;
+        right: clamp(1.5rem, 4vw, 4rem);
+        bottom: 1.8rem;
+    }
+
+    @media (max-width: 48rem) {
+        .shell {
+            grid-template-columns: minmax(0, 1fr) auto;
+            --height: calc(100dvh - var(--page-padding) - var(--page-padding));
+            --top-line: 5.5rem;
+            --tab-bevel: 8px;
+            --bottom-cut: 3.75rem;
+            --bottom-inset: max(2rem, 5%);
+            grid-template-rows: var(--top-line) auto minmax(0, 1fr) auto;
+            gap: clamp(0.35rem, 1dvh, var(--space-md));
+            padding: 0 clamp(var(--space-sm), 2.5vw, var(--space-lg));
+            --rail-outline: polygon(
+                0 var(--tab-bevel),
+                var(--tab-bevel) 0,
+                calc(100% - var(--tab-bevel)) 0,
+                100% var(--tab-bevel),
+                100% calc(100% - var(--bottom-bevel)),
+                calc(100% - var(--bottom-bevel)) 100%,
+                var(--bottom-bevel) 100%,
+                0 calc(100% - var(--bottom-bevel))
+            );
+            --shell-outline: polygon(
+                0 var(--tab-bevel),
+                var(--tab-bevel) 0,
+                12px 0,
+                24px var(--top-line),
+                calc(100% - 24px) var(--top-line),
+                calc(100% - 12px) 0,
+                calc(100% - var(--tab-bevel)) 0,
+                100% var(--tab-bevel),
+                100% calc(100% - var(--bottom-bevel)),
+                calc(100% - var(--bottom-bevel)) 100%,
+                calc(100% - var(--bottom-inset)) 100%,
+                calc(100% - var(--bottom-inset) - 20px)
+                    calc(100% - var(--bottom-cut)),
+                calc(var(--bottom-inset) + 20px) calc(100% - var(--bottom-cut)),
+                var(--bottom-inset) 100%,
+                var(--bottom-bevel) 100%,
+                0 calc(100% - var(--bottom-bevel))
+            );
+        }
+
+        .shell__brand {
+            grid-column: 1;
+            grid-row: 2;
+            align-self: stretch;
+            justify-self: stretch;
+            width: auto;
+            height: auto;
+            min-height: 0;
+            margin: 0;
+        }
+
+        .shell__speaker {
+            grid-column: 2;
+            grid-row: 2;
+            align-self: stretch;
+            justify-self: stretch;
+            width: auto;
+            min-height: 0;
+            margin: 0;
+        }
+
+        .shell__top {
+            grid-column: 1 / -1;
+            grid-row: 1;
+            align-self: end;
+            justify-self: stretch;
+            width: auto;
+            min-height: 0;
+            margin: 0 var(--space-sm);
+        }
+
+        .shell__left {
+            display: none;
+        }
+
+        .shell__activity {
+            display: none;
+        }
+
+        .shell__bottom {
+            grid-row: 4;
+            margin: 0;
+            min-height: var(--bottom-cut);
+        }
+
+        .shell__screen {
+            grid-column: 1 / -1;
+            grid-row: 3;
+            margin: 0;
+        }
+
+        .shell__systemControls {
+            position: static;
+            transform: none;
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .shell__dpad {
+            position: relative;
+            inset: auto;
+        }
+
+        .shell__buttons {
+            grid-column: 3;
+            grid-row: 1;
+            justify-self: end;
+            position: relative;
+            inset: auto;
+        }
+    }
+
+    /* Shared decorative controls used by SpeakerNotch and BottomRail. */
+    .systemControl {
+        --stack-space: var(--space-sm);
+        align-items: center;
+        min-width: clamp(2rem, 6vw, 3rem);
+    }
+
+    .systemControl__button {
+        width: var(--system-button-width, 2.5rem);
+        height: 0.75rem;
+        border: 1px solid var(--color-ink);
+        border-radius: 1rem;
+        background: var(
+            --system-button-background,
+            linear-gradient(var(--color-muted), var(--color-ink))
+        );
+        box-shadow:
+            inset 0 1px 0 var(--color-shell-light),
+            0 2px 0 var(--color-ink),
+            0 3px 1px var(--color-bevel-light);
+    }
+
+    .systemControl__label {
+        --cluster-space: 0.3rem;
+        flex-wrap: nowrap;
+        color: var(--color-ink);
+        font:
+            bold clamp(0.45rem, 0.35rem + 0.4vw, 0.55rem) / 1 ui-monospace,
+            monospace;
+        letter-spacing: clamp(0em, -0.1em + 0.25vw, 0.1em);
+        text-shadow: 0 1px 0 var(--color-shell-light);
+    }
+
+    /* Screen placement and glass remain independent of each view’s content. */
+    .shellScreen {
+        padding: 10px;
+        color: var(--color-ink);
+        overflow-wrap: anywhere;
+        min-width: 0;
+        min-height: 0;
+        border: 2px solid var(--color-bevel-shadow);
+        border-radius: 18px 18px 30px 18px;
+        background: linear-gradient(135deg, #354254, #202b3c 45%, #111b2b);
+        box-shadow:
+            inset 1px 1px 0 #64718a,
+            inset -1px -1px 0 #0c1421,
+            0 -2px 1px var(--color-bevel-shadow),
+            1px 2px 0 var(--color-bevel-light),
+            4px 6px 10px var(--color-shadow);
+    }
+
+    .shellScreen__frame {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        position: relative;
+        isolation: isolate;
+        height: 100%;
+        border: 1px solid #0c1421;
+        border-radius: 10px 10px 18px 10px;
+        background: var(--content-screen);
+        box-shadow:
+            -1px -1px 0 #101927,
+            1px 1px 0 #65718a;
+    }
+
+    .shellScreen__body {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: clip;
+        border-radius: inherit;
+    }
+
+    .page-panel {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .page-panel:not([hidden]) {
+            animation: page-reveal 160ms ease-out;
+        }
+    }
+
+    @keyframes page-reveal {
+        from {
+            opacity: 0.65;
+            transform: translateY(3px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .shellScreen__frame::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        border-radius: inherit;
+        pointer-events: none;
+        background: linear-gradient(125deg, #ffffff1a, transparent 42%);
+        box-shadow:
+            inset 7px 9px 16px #0c142180,
+            inset 2px 3px 4px #0c1421b3,
+            inset -3px -3px 7px #f4f1eb80;
+    }
+</style>

@@ -15,6 +15,7 @@ async function verifyPortfolio() {
         page.on('pageerror', error => errors.push(error.message));
         await page.goto(base);
         await page.locator('h1').waitFor();
+        await page.locator('.shell').waitFor();
         for (const width of [1440, 390]) {
             await page.setViewportSize({ width, height: 1000 });
             assert(await page.locator('h1').first().isVisible());
