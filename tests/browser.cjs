@@ -16,6 +16,7 @@ async function verifyPortfolio() {
         await page.goto(base);
         await page.locator('h1').waitFor();
         await page.locator('.shell').waitFor();
+        assert(await page.locator('.shellFinish__faceEdges polygon').first().getAttribute('points'));
         for (const width of [1440, 390]) {
             await page.setViewportSize({ width, height: 1000 });
             assert(await page.locator('h1').first().isVisible());

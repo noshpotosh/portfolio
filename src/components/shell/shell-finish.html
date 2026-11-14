@@ -1,0 +1,439 @@
+<div class="shellFinish" aria-hidden="true">
+    <svg
+        class="shellFinish__edges shellFinish__railShadows"
+        aria-hidden="true"
+        focusable="false"
+    >
+        <polygon class="shellFinish__railShadow"></polygon>
+        <polygon class="shellFinish__railHighlight"></polygon>
+    </svg>
+
+    <svg
+        class="shellFinish__edges shellFinish__faceEdges"
+        aria-hidden="true"
+        focusable="false"
+    >
+        <defs>
+            <linearGradient id="face-bevel" x1="0" y1="0" x2="1" y2="1">
+                <stop class="shellFinish__bevelLight" offset="0%"></stop>
+                <stop class="shellFinish__bevelMid" offset="45%"></stop>
+                <stop class="shellFinish__bevelShadow" offset="100%"></stop>
+            </linearGradient>
+
+            <linearGradient id="shell-face-fill" gradientUnits="userSpaceOnUse">
+                <stop class="shellFinish__fillLight" offset="0%"></stop>
+                <stop class="shellFinish__fillMid" offset="35%"></stop>
+                <stop class="shellFinish__fillShade" offset="70%"></stop>
+                <stop class="shellFinish__fillMid" offset="100%"></stop>
+            </linearGradient>
+
+            <radialGradient id="shell-sheen" cx="22%" cy="8%" r="85%">
+                <stop
+                    offset="0%"
+                    class="shellFinish__reflection"
+                    stop-opacity="1"
+                ></stop>
+                <stop
+                    offset="40%"
+                    class="shellFinish__reflection"
+                    stop-opacity="0.3"
+                ></stop>
+                <stop
+                    offset="75%"
+                    class="shellFinish__reflection"
+                    stop-opacity="0"
+                ></stop>
+            </radialGradient>
+
+            <linearGradient id="shell-gloss" x1="0" y1="0" x2="0.6" y2="1">
+                <stop
+                    offset="8%"
+                    class="shellFinish__reflection"
+                    stop-opacity="0"
+                ></stop>
+                <stop
+                    offset="24%"
+                    class="shellFinish__reflection"
+                    stop-opacity="0.2"
+                ></stop>
+                <stop
+                    offset="31%"
+                    class="shellFinish__reflection"
+                    stop-opacity="0.9"
+                ></stop>
+                <stop
+                    offset="36%"
+                    class="shellFinish__reflection"
+                    stop-opacity="0.35"
+                ></stop>
+                <stop
+                    offset="46%"
+                    class="shellFinish__reflection"
+                    stop-opacity="0"
+                ></stop>
+            </linearGradient>
+
+            <linearGradient id="shell-rim" x1="0" y1="0" x2="0.35" y2="1">
+                <stop class="shellFinish__rimLight" offset="0%"></stop>
+                <stop class="shellFinish__rimLight" offset="30%"></stop>
+                <stop class="shellFinish__rimShade" offset="75%"></stop>
+                <stop class="shellFinish__rimLight" offset="100%"></stop>
+            </linearGradient>
+
+        </defs>
+
+        <polygon class="shellFinish__edgeBorder"></polygon>
+        <polygon
+            class="shellFinish__edgeBevel"
+            stroke="url(#face-bevel)"
+        ></polygon>
+        <polygon
+            class="shellFinish__faceFill"
+            fill="url(#shell-face-fill)"
+        ></polygon>
+        <polygon
+            class="shellFinish__faceSheen"
+            fill="url(#shell-sheen)"
+        ></polygon>
+        <polygon
+            class="shellFinish__faceGloss"
+            fill="url(#shell-gloss)"
+        ></polygon>
+        <polygon
+            class="shellFinish__edgeHighlight"
+            stroke="url(#shell-rim)"
+        ></polygon>
+    </svg>
+
+    <div class="shellFinish__surface"></div>
+</div>
+
+<script type="module">
+    const POLYGON_PREFIX = "polygon(";
+    const RIM_WIDTH_PROPERTIES = [
+        "--shell-border-width",
+        "--shell-spacing-width",
+        "--shell-highlight-width",
+    ];
+
+    /**
+     * Keep SVG decorations aligned with the CSS face as the shell resizes.
+     * @param {Element | null} finish Decorative shell container.
+     * @returns {(() => void) | undefined} Removes observers, listeners, and probes;
+     * undefined when the required shell elements are absent.
+     */
+    function initializeShellFinish(finish) {
+        if (!finish) return;
+
+        const shell = finish.closest(".shell");
+        const surface = finish.querySelector(".shellFinish__surface");
+        const faceEdges = finish.querySelector(".shellFinish__faceEdges");
+        if (!shell || !surface || !faceEdges) return;
+
+        const probes = [];
+
+        const observer = new ResizeObserver(updateShellEdges);
+        observer.observe(shell);
+        // Viewport units can change the outline even when the shell hits its max width.
+        window.addEventListener("resize", updateShellEdges);
+        updateShellEdges();
+
+        return () => {
+            observer.disconnect();
+            window.removeEventListener("resize", updateShellEdges);
+            probes.forEach((probe) => probe.remove());
+        };
+
+        /**
+         * Update face, rim, and rail polygons from the resolved CSS outlines.
+         * @returns {void}
+         */
+        function updateShellEdges() {
+            const outline = getComputedStyle(surface).clipPath;
+            if (!outline.startsWith(POLYGON_PREFIX)) return;
+
+            const styles = getComputedStyle(shell);
+            const points = resolveOutline(outline);
+            const serializedPoints = serializePoints(points);
+            faceEdges.querySelectorAll("polygon").forEach((polygon) => {
+                polygon.setAttribute("points", serializedPoints);
+            });
+
+            // Cast from the outer rim, so the bevel does not cover the rail shadow.
+            const rimWidth = RIM_WIDTH_PROPERTIES.reduce(
+                (width, property) =>
+                    width + parseFloat(styles.getPropertyValue(property)),
+                0,
+            );
+            finish
+                .querySelector(".shellFinish__railShadow")
+                .setAttribute(
+                    "points",
+                    serializePoints(offsetOutline(points, rimWidth)),
+                );
+
+            // Clipping removes the stroke's outer half, keeping the lip inside the rails.
+            const railOutline = styles
+                .getPropertyValue("--rail-outline")
+                .trim();
+            finish
+                .querySelector(".shellFinish__railHighlight")
+                .setAttribute(
+                    "points",
+                    serializePoints(resolveOutline(railOutline)),
+                );
+
+            // Center the stroke half its width outside the face, avoiding an overlap.
+            const highlightWidth = parseFloat(
+                styles.getPropertyValue("--shell-highlight-width"),
+            );
+            const highlight = offsetOutline(points, highlightWidth / 2);
+            faceEdges
+                .querySelector(".shellFinish__edgeHighlight")
+                .setAttribute("points", serializePoints(highlight));
+
+            updateFaceGradient(
+                parseFloat(styles.getPropertyValue("--shell-light-angle")),
+            );
+        }
+
+        /**
+         * Resolve a CSS polygon to pixel pairs using reusable, invisible probes.
+         * @param {string} outline CSS polygon, including calc() and percentage values.
+         * @returns {number[][]} Resolved [x, y] coordinates.
+         */
+        function resolveOutline(outline) {
+            const coordinates = splitCoordinates(
+                outline.slice(POLYGON_PREFIX.length, -1),
+                /,/,
+            );
+
+            // Set every coordinate before reading positions so the browser resolves
+            // the outline in one layout, rather than forcing a layout per corner.
+            coordinates.forEach((point, index) => {
+                if (!probes[index]) {
+                    const probe = document.createElement("span");
+                    probe.setAttribute("aria-hidden", "true");
+                    probe.style.cssText =
+                        "position:absolute;width:0;height:0;visibility:hidden;pointer-events:none;border:0;padding:0;";
+                    finish.append(probe);
+                    probes.push(probe);
+                }
+
+                const [x, y] = splitCoordinates(point, /\s/);
+                probes[index].style.left = x;
+                probes[index].style.top = y;
+            });
+
+            return coordinates.map((_, index) => {
+                const resolved = getComputedStyle(probes[index]);
+                return [parseFloat(resolved.left), parseFloat(resolved.top)];
+            });
+        }
+
+        // SVG needs pixel endpoints to match a CSS gradient at any aspect ratio.
+        function updateFaceGradient(angleDegrees) {
+            const { width, height } = shell.getBoundingClientRect();
+            const angleRadians = (angleDegrees * Math.PI) / 180;
+            const directionX = Math.sin(angleRadians);
+            const directionY = -Math.cos(angleRadians);
+            const gradientLength =
+                width * Math.abs(directionX) + height * Math.abs(directionY);
+            const gradient = faceEdges.querySelector("#shell-face-fill");
+
+            Object.entries({
+                x1: (width - directionX * gradientLength) / 2,
+                y1: (height - directionY * gradientLength) / 2,
+                x2: (width + directionX * gradientLength) / 2,
+                y2: (height + directionY * gradientLength) / 2,
+            }).forEach(([attribute, value]) =>
+                gradient.setAttribute(attribute, value),
+            );
+        }
+    }
+
+    // Split outside CSS functions: calc() contains spaces and min() contains commas.
+    function splitCoordinates(value, separator) {
+        let parenthesisDepth = 0;
+        let partStart = 0;
+        const parts = [];
+
+        for (
+            let characterIndex = 0;
+            characterIndex < value.length;
+            characterIndex++
+        ) {
+            if (value[characterIndex] === "(") parenthesisDepth++;
+            if (value[characterIndex] === ")") parenthesisDepth--;
+            if (parenthesisDepth === 0 && separator.test(value[characterIndex])) {
+                const coordinatePart = value
+                    .slice(partStart, characterIndex)
+                    .trim();
+                if (coordinatePart) parts.push(coordinatePart);
+                partStart = characterIndex + 1;
+            }
+        }
+
+        if (value.slice(partStart).trim())
+            parts.push(value.slice(partStart).trim());
+
+        return parts;
+    }
+
+    function serializePoints(points) {
+        return points.map((point) => point.join(",")).join(" ");
+    }
+
+    /**
+     * Offset a clockwise outline along adjoining edge normals for an even rim.
+     * @param {number[][]} points Polygon vertices as [x, y] pairs.
+     * @param {number} distance Outward offset in pixels.
+     * @returns {number[][]} Offset vertices, including diagonal corners.
+     */
+    function offsetOutline(points, distance) {
+        return points.map((point, pointIndex) => {
+            const previousPoint =
+                points[(pointIndex + points.length - 1) % points.length];
+            const nextPoint = points[(pointIndex + 1) % points.length];
+            const previousNormal = outwardNormal(previousPoint, point);
+            const nextNormal = outwardNormal(point, nextPoint);
+            const offsetScale =
+                distance /
+                (1 + previousNormal[0] * nextNormal[0] + previousNormal[1] * nextNormal[1]);
+
+            return [
+                point[0] + (previousNormal[0] + nextNormal[0]) * offsetScale,
+                point[1] + (previousNormal[1] + nextNormal[1]) * offsetScale,
+            ];
+        });
+    }
+
+    function outwardNormal(start, end) {
+        const deltaX = end[0] - start[0];
+        const deltaY = end[1] - start[1];
+        const edgeLength = Math.hypot(deltaX, deltaY);
+        return [deltaY / edgeLength, -deltaX / edgeLength];
+    }
+
+    initializeShellFinish(document.querySelector(".shellFinish"));
+</script>
+
+<style>
+    .shellFinish,
+    .shellFinish__surface {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+
+    .shellFinish {
+        z-index: -1;
+    }
+
+    .shellFinish__edges {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        fill: none;
+        stroke-linejoin: miter;
+        pointer-events: none;
+    }
+
+    .shellFinish__edgeBorder {
+        stroke: var(--shell-border-color);
+        stroke-width: calc(
+            2 *
+                (
+                    var(--shell-border-width) + var(--shell-spacing-width) +
+                        var(--shell-highlight-width)
+                )
+        );
+    }
+
+    .shellFinish__railShadows {
+        clip-path: var(--rail-outline);
+    }
+
+    .shellFinish__railShadow {
+        /* CSS drop-shadow avoids WebKit's expensive SVG filter pipeline. */
+        filter: drop-shadow(
+            var(--rail-shadow-x) var(--rail-shadow-y) var(--rail-shadow-blur)
+                var(--rail-shadow-color)
+        );
+        fill: var(--recess-color);
+        stroke: var(--rail-shadow-color);
+        stroke-width: calc(2 * var(--rail-shadow-spread));
+    }
+
+    .shellFinish__railHighlight {
+        stroke: var(--rail-highlight-color);
+        stroke-width: calc(2 * var(--rail-highlight-width));
+    }
+
+    .shellFinish__edgeBevel {
+        stroke-width: calc(
+            2 * (var(--shell-spacing-width) + var(--shell-highlight-width))
+        );
+    }
+
+    .shellFinish__bevelLight {
+        stop-color: var(--shell-bevel-light);
+    }
+
+    .shellFinish__bevelMid {
+        stop-color: var(--shell-bevel-mid);
+    }
+
+    .shellFinish__bevelShadow {
+        stop-color: var(--shell-bevel-shadow);
+    }
+
+    .shellFinish__edgeHighlight {
+        stroke-width: var(--shell-highlight-width);
+    }
+
+    .shellFinish__rimLight {
+        stop-color: var(--shell-highlight-color);
+    }
+
+    .shellFinish__rimShade {
+        stop-color: var(--shell-highlight-shade);
+    }
+
+    .shellFinish__faceSheen {
+        opacity: var(--shell-sheen-opacity);
+    }
+
+    .shellFinish__faceGloss {
+        opacity: var(--shell-gloss-opacity);
+    }
+
+    .shellFinish__surface {
+        clip-path: var(--shell-outline);
+        visibility: hidden;
+    }
+
+    .shellFinish__reflection {
+        stop-color: var(--color-paper);
+    }
+
+    .shellFinish__fillLight {
+        stop-color: var(--shell-light-color);
+    }
+
+    .shellFinish__fillMid {
+        stop-color: var(--shell-color);
+    }
+
+    .shellFinish__fillShade {
+        stop-color: var(--shell-shade-color);
+    }
+
+    @media (max-width: 48rem) {
+        .shellFinish__railShadows {
+            display: none;
+        }
+    }
+</style>
