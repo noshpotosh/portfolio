@@ -23,6 +23,14 @@
             >
                 <cf-include src="./pages/projects.html"></cf-include>
             </div>
+            <div
+                class="page-panel"
+                data-view="case-study"
+                data-title="Case study"
+                hidden
+            >
+                <cf-include src="./components/case-study.html"></cf-include>
+            </div>
         </cf-include>
         <noscript
             ><p>Please enable JavaScript to view this portfolio.</p></noscript
@@ -35,7 +43,7 @@
             function showPage() {
                 if (!panels.length) return;
                 const hash = location.hash.slice(1);
-                const study = false;
+                const study = hash.startsWith("projects/");
                 const selected = panels.find(
                     (panel) =>
                         panel.dataset.view === (study ? "case-study" : hash),
@@ -46,6 +54,36 @@
                 const page = active.dataset.view;
                 const route = study ? hash : page;
                 if (route === currentPage) return;
+                if (study) {
+                    // Reserve the outgoing view’s space until the article is ready.
+                    // Otherwise the loading message briefly collapses the whole shell.
+                    const previousPanel = panels.find((panel) => !panel.hidden);
+                    active.style.minHeight = previousPanel
+                        ? `${previousPanel.getBoundingClientRect().height}px`
+                        : "";
+
+                    // Keep the entry point with this history entry, including after refresh.
+                    const savedReturn = history.state?.caseStudyReturn;
+                    const returnPage = ["home", "projects"].includes(
+                        savedReturn,
+                    )
+                        ? savedReturn
+                        : currentPage === "home"
+                          ? "home"
+                          : "projects";
+                    history.replaceState(
+                        { ...history.state, caseStudyReturn: returnPage },
+                        "",
+                    );
+                    const back = document.getElementById("case-study-back");
+                    back.href = `#${returnPage}`;
+                    const backLabel =
+                        returnPage === "home"
+                            ? "Back to home"
+                            : "Back to projects";
+                    back.setAttribute("aria-label", backLabel);
+                    back.title = backLabel;
+                }
                 const focusPage = Boolean(currentPage);
                 currentPage = route;
                 document.body.dataset.page = page;
