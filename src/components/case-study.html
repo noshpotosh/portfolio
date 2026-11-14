@@ -1,0 +1,423 @@
+<div id="case-study-view" class="screen-content caseStudy stack">
+    <header class="caseStudy__header">
+        <a
+            id="case-study-back"
+            class="action action--secondary caseStudy__back"
+            href="#projects"
+            aria-label="Back to projects"
+            title="Back to projects"
+            >←</a
+        >
+        <div class="caseStudy__heading">
+            <img
+                id="case-study-icon"
+                class="caseStudy__icon"
+                alt=""
+                width="48"
+                height="48"
+                hidden
+            />
+            <h1 id="case-study-title" class="caseStudy__title">Case study</h1>
+        </div>
+        <nav
+            id="case-study-links"
+            class="caseStudy__source"
+            aria-label="Project links"
+        ></nav>
+    </header>
+
+    <article
+        id="case-study-content"
+        class="caseStudy__content flow"
+        aria-live="polite"
+    ></article>
+</div>
+
+<template id="case-study-links-template">
+    <cf-data source="loadCurrentCaseStudy" name="study">
+        <template>
+            <a
+                target="_blank"
+                rel="noopener noreferrer"
+                cf-href="study.repositoryURL"
+            >Source on GitHub</a>
+            <cf-if test="study.websiteURL">
+                <template>
+                    <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        cf-href="study.websiteURL"
+                    >Visit project</a>
+                </template>
+            </cf-if>
+        </template>
+        <template data-state="error"></template>
+    </cf-data>
+</template>
+
+<template id="case-study-article-template">
+    <cf-data class="flow" source="loadCurrentCaseStudy" name="study">
+        <template>
+            <cf-if test="study.contentHTML">
+                <template>
+                    <div class="caseStudy__markdown prose flow"></div>
+                </template>
+                <template data-state="else">
+                    <p class="caseStudy__status">
+                        A case study hasn’t been published for this project yet.
+                    </p>
+                </template>
+            </cf-if>
+        </template>
+        <template data-state="loading">
+            <p class="caseStudy__status" role="status">Loading case study…</p>
+        </template>
+        <template data-state="error">
+            <p class="caseStudy__status" role="alert">
+                This case study could not load. Return to Projects and try again.
+            </p>
+            <a class="caseStudy__fallback" target="_blank" rel="noopener noreferrer">
+                Read on GitHub
+            </a>
+        </template>
+    </cf-data>
+</template>
+
+<script type="module">
+    const CASE_STUDY_TIMEOUT_MS = 10000;
+    const GITHUB_WEB_BASE = "https://github.com";
+    const MARKDOWN_MODULE_PATH = "./vendor/markdown-it.mjs";
+
+    const titleElement = document.getElementById("case-study-title");
+    const iconElement = document.getElementById("case-study-icon");
+    const contentElement = document.getElementById("case-study-content");
+    const panelElement = contentElement.closest(".page-panel");
+    const linksElement = document.getElementById("case-study-links");
+
+    const linksTemplate = document.getElementById("case-study-links-template");
+    const articleTemplate = document.getElementById("case-study-article-template");
+
+    let markdownRenderer;
+    let currentRoute;
+    let currentStudyPromise;
+
+    // Both CFJS regions share the request captured for the current route.
+    window.loadCurrentCaseStudy = () => currentStudyPromise;
+
+    /**
+     * Mount fresh data regions for each project route, preserving heading focus.
+     * Detached CFJS regions cannot render results from an earlier navigation.
+     * @returns {void}
+     */
+    function showCaseStudy() {
+        const route = location.hash;
+        if (route === currentRoute) return;
+
+        currentRoute = route;
+        if (!route.startsWith(PROJECT_ROUTE_PREFIX)) return;
+
+        // Disconnect previous data regions before mounting another study.
+        linksElement.replaceChildren();
+        contentElement.replaceChildren();
+
+        let repositoryName;
+        try {
+            repositoryName = decodeURIComponent(
+                route.slice(PROJECT_ROUTE_PREFIX.length),
+            );
+        } catch {
+            repositoryName = "";
+        }
+
+        titleElement.textContent = repositoryName || "Case study";
+        iconElement.hidden = true;
+        iconElement.removeAttribute("src");
+        document.title = `${repositoryName || "Case study"} — Noah Stewart`;
+
+        const studyPromise = loadCaseStudyData(repositoryName);
+        currentStudyPromise = studyPromise;
+        const article = articleTemplate.content.cloneNode(true);
+        // CFJS error templates are static, so prepare this route-specific URL
+        // before mounting instead of adding a new binding API.
+        article.querySelector('template[data-state="error"]').content
+            .querySelector(".caseStudy__fallback").href =
+            `${GITHUB_WEB_BASE}/${githubUser}/${encodeURIComponent(repositoryName)}`;
+
+        const articleData = article.querySelector("cf-data");
+        articleData.addEventListener("cf:load", async () => {
+            const study = await studyPromise;
+            if (!articleData.isConnected || location.hash !== route) return;
+
+            const markdownElement = articleData.querySelector(".caseStudy__markdown");
+            // Raw HTML is disabled and Markdown destinations are validated.
+            if (markdownElement) markdownElement.innerHTML = study.contentHTML;
+            if (study.iconURL) {
+                iconElement.src = study.iconURL;
+                iconElement.hidden = false;
+            }
+            panelElement.style.removeProperty("min-height");
+        }, { once: true });
+        articleData.addEventListener("cf:error", () => {
+            if (articleData.isConnected && location.hash === route)
+                panelElement.style.removeProperty("min-height");
+        }, { once: true });
+
+        linksElement.append(linksTemplate.content.cloneNode(true));
+        contentElement.append(article);
+    }
+
+    /**
+     * Load shared metadata and rendered Markdown for the two CFJS regions.
+     * @param {string} repositoryName Repository selected by the route.
+     * @returns {Promise<Object>} Presentation data; rejects for unlisted projects or failures.
+     */
+    async function loadCaseStudyData(repositoryName) {
+        const repository = (await fetchPortfolioRepositories()).find(
+            (candidate) =>
+                candidate.name === repositoryName && repositoryCategory(candidate),
+        );
+        if (!repository) throw new Error("Project is not listed");
+
+        const [contentHTML, iconURL] = await Promise.all([
+            loadCaseStudy(repository),
+            repositoryImageURL(repository, PROJECT_ICON_FILENAME),
+        ]);
+
+        return {
+            contentHTML,
+            iconURL,
+            repositoryURL: repository.html_url,
+            websiteURL: /^https?:\/\//i.test(repository.homepage || "")
+                ? repository.homepage
+                : "",
+        };
+    }
+
+    /**
+     * Fetch and render repository Markdown; reject on failures other than 404.
+     * @param {Object} repository
+     * @returns {Promise<string|null>} Rendered HTML, or null for missing/empty content.
+     */
+    async function loadCaseStudy(repository) {
+        const response = await fetch(
+            `${GITHUB_RAW_BASE}/${githubUser}/${encodeURIComponent(repository.name)}/${encodeURIComponent(repository.default_branch)}/${CASE_STUDY_FILENAME}`,
+            {
+                signal: AbortSignal.timeout(CASE_STUDY_TIMEOUT_MS),
+            },
+        );
+        if (response.status === 404) return null;
+        if (!response.ok)
+            throw new Error(
+                `Case study for ${repository.name}: GitHub responded ${response.status}`,
+            );
+
+        const source = await response.text();
+        return source.trim() ? renderCaseStudy(source, repository) : null;
+    }
+
+    /**
+     * Render Markdown with raw HTML disabled and repository-relative destinations.
+     * @param {string} source
+     * @param {Object} repository
+     * @returns {Promise<string>}
+     */
+    async function renderCaseStudy(source, repository) {
+        const renderer = await getMarkdownRenderer();
+        return renderer.render(source, { repo: repository });
+    }
+
+    /**
+     * Lazily create the Markdown renderer and register its presentation rules.
+     * @returns {Promise<Object>}
+     */
+    async function getMarkdownRenderer() {
+        if (!markdownRenderer) {
+            const { default: MarkdownIt } = await import(MARKDOWN_MODULE_PATH);
+            markdownRenderer = new MarkdownIt({ html: false });
+            markdownRenderer.core.ruler.after(
+                "inline",
+                "image_galleries",
+                markImageGalleries,
+            );
+            markdownRenderer.core.ruler.after(
+                "inline",
+                "repository_urls",
+                rewriteRepositoryURLs,
+            );
+        }
+
+        return markdownRenderer;
+    }
+
+    /**
+     * Mark paragraphs containing only multiple images as galleries.
+     * @param {Object} state Markdown parser state.
+     * @returns {void}
+     */
+    function markImageGalleries(state) {
+        state.tokens.forEach((blockToken, index) => {
+            const inlineToken = state.tokens[index + 1];
+            if (blockToken.type !== "paragraph_open" || !inlineToken?.children)
+                return;
+
+            const contentTokens = inlineToken.children.filter(
+                (child) =>
+                    child.type !== "softbreak" &&
+                    !(child.type === "text" && !child.content.trim()),
+            );
+            if (
+                contentTokens.length > 1 &&
+                contentTokens.every((child) => child.type === "image")
+            )
+                blockToken.attrJoin("class", "caseStudy__gallery");
+        });
+    }
+
+    /**
+     * Validate image/link destinations and apply loading and external-link attributes.
+     * @param {Object} state Markdown parser state with the repository in its environment.
+     * @returns {void}
+     */
+    function rewriteRepositoryURLs(state) {
+        for (const blockToken of state.tokens) {
+            for (const inlineToken of blockToken.children || []) {
+                const isImage = inlineToken.type === "image";
+                if (!isImage && inlineToken.type !== "link_open") continue;
+
+                const destinationAttribute = isImage ? "src" : "href";
+                const destination = inlineToken.attrGet(destinationAttribute);
+                if (destination === null) continue;
+
+                const resolvedURL = resolveRepositoryURL(
+                    destination,
+                    state.env.repo,
+                    isImage,
+                );
+                if (resolvedURL)
+                    inlineToken.attrSet(destinationAttribute, resolvedURL);
+                else
+                    inlineToken.attrs = inlineToken.attrs.filter(
+                        ([attributeName]) => attributeName !== destinationAttribute,
+                    );
+
+                if (isImage) inlineToken.attrSet("loading", "lazy");
+                else if (resolvedURL && !resolvedURL.startsWith("#")) {
+                    inlineToken.attrSet("target", "_blank");
+                    inlineToken.attrSet("rel", "noopener noreferrer");
+                }
+            }
+        }
+    }
+
+    /**
+     * Resolve safe repository destinations; only links may use mailto URLs.
+     * @param {string} destination
+     * @param {Object} repository
+     * @param {boolean} isImage
+     * @returns {string|null} A safe destination, or null when invalid.
+     */
+    function resolveRepositoryURL(destination, repository, isImage) {
+        if (destination.startsWith("#")) return destination;
+
+        const repositoryName = encodeURIComponent(repository.name);
+        const branchName = encodeURIComponent(repository.default_branch);
+        const baseURL = isImage
+            ? `${GITHUB_RAW_BASE}/${githubUser}/${repositoryName}/${branchName}/`
+            : `${GITHUB_WEB_BASE}/${githubUser}/${repositoryName}/blob/${branchName}/`;
+
+        try {
+            const url = new URL(destination, baseURL);
+            if (
+                WEB_PROTOCOLS.includes(url.protocol) ||
+                (!isImage && url.protocol === "mailto:")
+            )
+                return url.href;
+        } catch {
+            // Invalid links are rendered without a destination.
+        }
+
+        return null;
+    }
+
+    iconElement.addEventListener("error", () => {
+        iconElement.hidden = true;
+    });
+    window.addEventListener("hashchange", showCaseStudy);
+    showCaseStudy();
+</script>
+
+<style>
+    .caseStudy {
+        --stack-space: var(--content-spacing);
+    }
+
+    .caseStudy__header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-md);
+        border-bottom: var(--page-divider);
+        padding-bottom: var(--space-lg);
+    }
+
+    .caseStudy__source {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: var(--space-md);
+        margin-left: auto;
+    }
+
+    .caseStudy__back {
+        min-width: var(--action-size);
+        flex-shrink: 0;
+    }
+
+    .caseStudy__content cf-data {
+        display: block;
+    }
+
+    .caseStudy__source:not(:has(a)) {
+        display: none;
+    }
+
+    .caseStudy__title {
+        color: var(--content-heading);
+        font-size: var(--text-heading-lg);
+        line-height: 1.2;
+        overflow-wrap: anywhere;
+    }
+
+    .caseStudy__heading {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        min-width: 0;
+    }
+
+    .caseStudy__icon {
+        flex-shrink: 0;
+        object-fit: contain;
+    }
+
+    .caseStudy__content {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .caseStudy__content a,
+    .caseStudy__source a {
+        color: var(--content-link);
+    }
+
+    .caseStudy__gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+        gap: var(--space-md);
+        align-items: start;
+    }
+
+    .caseStudy__gallery img {
+        width: 100%;
+    }
+</style>

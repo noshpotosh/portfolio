@@ -2,6 +2,17 @@
 <span class="projectCard__technologies" cf-text="repo.technologies"></span>
 
 <span class="projectCard__actions cluster">
+    <cf-if test="repo.hasCaseStudy">
+        <template>
+            <a
+                class="action projectCard__studyLink"
+                cf-href="repo.studyURL"
+                cf-text="repo.label"
+                cf-data-project="repo.name"
+            ></a>
+        </template>
+    </cf-if>
+
     <a
         class="action action--secondary projectCard__repositoryLink"
         cf-href="repo.html_url"
