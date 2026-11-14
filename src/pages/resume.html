@@ -1,0 +1,473 @@
+<div class="screen-content resumePage" id="resume-view">
+    <div class="resumePage__header page-header">
+        <cf-include src="./components/header.html"></cf-include>
+        <p class="page-label">Résumé</p>
+        <p id="resume-download-status" role="status" aria-live="polite"></p>
+    </div>
+
+    <cf-data id="resume-data" source="loadResume" name="resume">
+        <template>
+            <section
+                class="resumePage__identity resumePage__printOnly"
+                aria-labelledby="resume-name"
+            >
+                <h2 id="resume-name" cf-text="resume.name"></h2>
+                <ul
+                    class="resumePage__contacts"
+                    id="resume-contact"
+                    aria-label="Resume contact details"
+                >
+                    <li cf-text="resume.location"></li>
+                    <cf-loop items="resume.contacts" as="contact">
+                        <template>
+                            <li>
+                                <a
+                                    cf-href="contact.href"
+                                    cf-text="contact.label"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                ></a>
+                            </li>
+                        </template>
+                    </cf-loop>
+                </ul>
+            </section>
+
+            <div class="resumePage__layout">
+                <div class="resumePage__main">
+                    <section
+                        class="resumePanel stack resumePanel--experience"
+                        id="resume-experience"
+                        aria-labelledby="experience-heading"
+                    >
+                        <header class="resumePanel__header">
+                            <h2 class="section-heading" id="experience-heading">
+                                Experience
+                            </h2>
+                        </header>
+
+                        <div class="resumePanel__body stack">
+                            <cf-loop items="resume.experience" as="entry">
+                                <template>
+                                    <cf-include
+                                        src="./components/resume-entry.html"
+                                    ></cf-include>
+                                </template>
+                            </cf-loop>
+                        </div>
+                    </section>
+
+                    <section
+                        class="resumePanel stack resumePanel--project"
+                        id="resume-project"
+                        aria-labelledby="resume-project-heading"
+                    >
+                        <header class="resumePanel__header">
+                            <h2
+                                class="section-heading"
+                                id="resume-project-heading"
+                            >
+                                Selected Project
+                            </h2>
+                        </header>
+
+                        <div class="resumePanel__body stack">
+                            <cf-loop items="resume.projects" as="entry">
+                                <template>
+                                    <cf-include
+                                        src="./components/resume-entry.html"
+                                    ></cf-include>
+                                </template>
+                            </cf-loop>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="resumePage__sidebar stack">
+                    <section
+                        class="resumePanel stack resumePanel--skills"
+                        id="resume-skills"
+                        aria-labelledby="resume-skills-title"
+                    >
+                        <header class="resumePanel__header">
+                            <h2
+                                class="section-heading"
+                                id="resume-skills-title"
+                            >
+                                Skills
+                            </h2>
+                        </header>
+
+                        <dl class="resumePanel__body resumeSkills stack">
+                            <cf-loop items="resume.skills" as="skill">
+                                <template>
+                                    <div class="flow">
+                                        <dt cf-text="skill.label"></dt>
+                                        <dd cf-text="skill.description"></dd>
+                                    </div>
+                                </template>
+                            </cf-loop>
+                        </dl>
+                    </section>
+
+                    <section
+                        class="resumePanel stack resumePanel--education"
+                        id="resume-education"
+                        aria-labelledby="education-heading"
+                    >
+                        <header class="resumePanel__header">
+                            <h2 class="section-heading" id="education-heading">
+                                Education
+                            </h2>
+                        </header>
+
+                        <div class="resumePanel__body stack resumeEntry">
+                            <h3
+                                class="resumePage__school resumeEntry__title"
+                                cf-text="resume.education.school"
+                            ></h3>
+                            <p class="resumeEntry__meta">
+                                <span cf-text="resume.education.degree"></span>
+                                <span
+                                    class="resumePage__year"
+                                    cf-text="resume.education.year"
+                                ></span>
+                            </p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </template>
+
+        <template data-state="loading">
+            <p role="status">Loading résumé…</p>
+        </template>
+
+        <template data-state="error">
+            <p role="alert">
+                Résumé could not load. Refresh to try again.
+            </p>
+        </template>
+    </cf-data>
+</div>
+
+<style>
+    #resume-download-status:empty {
+        display: none;
+    }
+
+    .resumePage__printOnly {
+        display: none;
+    }
+
+    .resumePage__layout {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+        grid-template-areas: "experience sidebar" "project project";
+        gap: var(--content-spacing);
+        align-items: start;
+    }
+
+    .resumePage__main {
+        display: contents;
+    }
+
+    .resumePanel--experience {
+        grid-area: experience;
+    }
+
+    .resumePanel--project {
+        grid-area: project;
+        border-top: var(--section-divider);
+        padding-top: var(--space-lg);
+    }
+
+    .resumePage__sidebar {
+        --stack-space: var(--content-spacing);
+        grid-area: sidebar;
+        min-width: 0;
+    }
+
+    .resumePanel {
+        --stack-space: var(--space-lg);
+        min-width: 0;
+    }
+
+    .resumePanel__body {
+        --stack-space: var(--space-lg);
+        padding: 0;
+    }
+
+    .resumePage .resumeEntry__meta {
+        color: var(--content-muted);
+        font-size: var(--text-small);
+    }
+
+    .resumePage__year {
+        display: block;
+    }
+
+    .resumeSkills {
+        --stack-space: var(--content-spacing);
+        --flow-space: var(--space-xs);
+    }
+
+    .resumeSkills dt {
+        font: bold var(--text-small) / 1.5 var(--font-label);
+        letter-spacing: 0.025em;
+        text-transform: uppercase;
+    }
+
+    .resumeSkills dd {
+        margin-inline: 0;
+    }
+
+    .resumePanel--education {
+        border-top: var(--section-divider);
+        padding-top: var(--space-lg);
+    }
+
+    .resumePanel--education .resumePanel__body {
+        --stack-space: var(--space-xs);
+    }
+
+    @container (max-width: 39rem) {
+        .resumePage__layout {
+            grid-template-columns: 1fr;
+            grid-template-areas: "experience" "sidebar" "project";
+        }
+
+        .resumePage__sidebar {
+            border-top: var(--section-divider);
+            padding-top: var(--space-lg);
+        }
+    }
+</style>
+
+<style>
+    /* Print the rendered resume as a clean Letter-size document. */
+    @media print {
+        @page {
+            size: letter;
+            margin: 0.6in;
+        }
+
+        body:has(#resume-view):not(:has([data-view="resume"][hidden])),
+        body:has(#resume-view):not(:has([data-view="resume"][hidden])) .shell {
+            display: block;
+            width: auto;
+            height: auto;
+            min-height: 0;
+            padding: 0;
+            background: white;
+        }
+
+        body:has(#resume-view):not(:has([data-view="resume"][hidden]))
+            .shell
+            > :not(.shellScreen),
+        body:has(#resume-view):not(:has([data-view="resume"][hidden]))
+            > :not(.shell),
+        body:has(#resume-view):not(:has([data-view="resume"][hidden]))
+            :is(.shell, .shellScreen__frame)::after {
+            display: none !important;
+        }
+
+        body:has(#resume-view):not(:has([data-view="resume"][hidden]))
+            :is(.shellScreen, .shellScreen__frame, .shellScreen__body) {
+            display: block;
+            width: auto;
+            height: auto;
+            min-height: 0;
+            overflow: visible;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            background: none;
+            box-shadow: none;
+            container-type: normal;
+        }
+
+        #resume-view.resumePage {
+            --content-heading: black;
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 0.75rem;
+            --space-lg: 1rem;
+            --space-xl: 1.5rem;
+            --content-spacing: 1.5rem;
+            --text-small: 9.5pt;
+            --text-body: 10.5pt;
+            --text-heading-sm: 11pt;
+            display: block;
+            padding: 0;
+            background: white;
+            color: black;
+            font:
+                10.5pt / 1.25 Helvetica,
+                Arial,
+                sans-serif;
+        }
+
+        #resume-view .resumePage__header,
+        #resume-view .profileHeader,
+        #resume-project-status {
+            display: none !important;
+        }
+
+        #resume-view .resumePage__printOnly {
+            display: block;
+        }
+
+        #resume-view .resumePage__identity h2 {
+            font-size: 22pt;
+            line-height: 1.2;
+            margin: 0;
+        }
+
+        #resume-view .resumePage__contacts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3pt 10pt;
+            margin: 5pt 0 0;
+            padding: 0;
+            list-style: none;
+            font-size: 9pt;
+        }
+
+        #resume-view .resumePage__contacts a {
+            color: black;
+            text-decoration: none;
+        }
+
+        #resume-view .resumePage__layout,
+        #resume-view .resumePage__main,
+        #resume-view .resumePage__sidebar {
+            display: block;
+        }
+
+        #resume-view .resumePanel {
+            display: block;
+            font: inherit;
+            overflow: visible;
+            border: 0;
+            border-radius: 0;
+            background: none;
+            box-shadow: none;
+            margin-top: 10pt;
+        }
+
+        #resume-view .resumePanel__header {
+            margin-bottom: 5pt;
+            padding: 0 0 3pt;
+            color: black;
+            background: none;
+            border-bottom: 0.5pt solid black;
+            break-after: avoid;
+        }
+
+        #resume-view .resumePanel__header h2 {
+            font:
+                bold 11pt / 1.2 Helvetica,
+                Arial,
+                sans-serif;
+            letter-spacing: 0.04em;
+        }
+
+        #resume-view .resumePanel__body {
+            display: block;
+            padding: 0;
+            font: inherit;
+        }
+
+        #resume-view article.resumeEntry {
+            --flow-space: 0;
+            break-inside: avoid;
+        }
+
+        #resume-view .resumeEntry + .resumeEntry {
+            margin-top: 7pt;
+            padding-top: 0;
+            border: 0;
+        }
+
+        #resume-view .resumeEntry__title,
+        #resume-view .resumePage__school {
+            margin: 0 0 2pt;
+            font-size: 11pt;
+            line-height: 1.2;
+        }
+
+        #resume-view .resumeEntry__meta {
+            color: black;
+            font-size: 9.5pt;
+            line-height: 1.25;
+        }
+
+        #resume-view .resumeEntry__meta span {
+            margin: 0;
+        }
+
+        #resume-view .resumeEntry__bullets {
+            display: block;
+            margin: 4pt 0 0;
+            padding-left: 12pt;
+            list-style: disc;
+        }
+
+        #resume-view .resumeEntry__bullet {
+            margin-bottom: 3pt;
+        }
+
+        #resume-view .resumeEntry__organization,
+        #resume-view .resumePage__year {
+            display: inline;
+            color: black;
+            font-weight: normal;
+        }
+
+        #resume-view .resumeEntry__organization + .resumeEntry__separator {
+            display: inline;
+        }
+
+        #resume-view .resumePage__sidebar,
+        #resume-view .resumePanel--project,
+        #resume-view .resumePanel--education {
+            padding-top: 0;
+            border-top: 0;
+        }
+
+        #resume-view .resumeEntry__bullet::marker {
+            color: black;
+        }
+
+        #resume-view .resumeSkills dt {
+            display: inline;
+            font:
+                bold 10.5pt / 1.25 Helvetica,
+                Arial,
+                sans-serif;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        #resume-view .resumeSkills dt::after {
+            content: ": ";
+        }
+
+        #resume-view .resumeSkills dd {
+            display: inline;
+            margin: 0;
+        }
+
+        #resume-view .resumeSkills > div {
+            margin-bottom: 3pt;
+        }
+
+        #resume-view .resumePanel--skills,
+        #resume-view .resumePanel--education,
+        #resume-view .resumePanel--project {
+            break-inside: avoid;
+        }
+    }
+</style>

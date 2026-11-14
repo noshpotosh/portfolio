@@ -1,0 +1,63 @@
+<article class="resumeEntry flow">
+    <h3 class="resumeEntry__title" cf-text="entry.title"></h3>
+    <p class="resumeEntry__meta">
+        <span
+            class="resumeEntry__organization"
+            cf-text="entry.organization"
+        ></span>
+        <cf-loop items="entry.details" as="detail">
+            <template>
+                <span class="resumeEntry__separator" aria-hidden="true">
+                    ·
+                </span>
+                <span cf-text="detail"></span>
+            </template>
+        </cf-loop>
+    </p>
+
+    <ul class="resumeEntry__bullets stack">
+        <cf-loop items="entry.bullets" as="bullet">
+            <template>
+                <li class="resumeEntry__bullet" cf-text="bullet"></li>
+            </template>
+        </cf-loop>
+    </ul>
+</article>
+
+<style>
+    .resumeEntry {
+        --flow-space: var(--space-xs);
+    }
+
+    .resumeEntry + .resumeEntry {
+        padding-top: var(--space-lg);
+        border-top: 1px solid var(--content-divider);
+    }
+
+    .resumeEntry__title {
+        font-size: var(--text-heading-sm);
+        line-height: 1.25;
+    }
+
+    .resumeEntry__organization {
+        display: block;
+        color: var(--content-ink);
+        font-weight: 600;
+    }
+
+    .resumeEntry__organization + .resumeEntry__separator {
+        display: none;
+    }
+
+    .resumeEntry__bullets {
+        --flow-space: var(--space-sm);
+        --stack-space: var(--space-sm);
+        padding-left: var(--space-lg);
+        list-style: disc;
+    }
+
+    .resumeEntry__bullet::marker {
+        color: var(--content-muted);
+        font-size: 0.75em;
+    }
+</style>
