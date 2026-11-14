@@ -1,0 +1,14 @@
+<strong class="projectCard__title" cf-id="repo.headingId">
+    <cf-if test="repo.iconURL">
+        <template>
+            <img
+                class="projectCard__icon"
+                cf-src="repo.iconURL"
+                alt=""
+                width="32"
+                height="32"
+            />
+        </template>
+    </cf-if>
+    <span cf-text="repo.name"></span>
+</strong>

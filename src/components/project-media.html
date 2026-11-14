@@ -1,0 +1,28 @@
+<cf-if test="repo.previewURL">
+    <template>
+        <cf-if test="repo.liveURL">
+            <template>
+                <a
+                    class="projectCard__previewLink"
+                    cf-href="repo.liveURL"
+                    cf-aria-label="repo.liveLabel"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <cf-include
+                        src="./components/project-preview.html"
+                    ></cf-include>
+                    <span class="projectCard__previewBadge" aria-hidden="true"
+                        >View live ↗</span
+                    >
+                </a>
+            </template>
+
+            <template data-state="else">
+                <cf-include
+                    src="./components/project-preview.html"
+                ></cf-include>
+            </template>
+        </cf-if>
+    </template>
+</cf-if>

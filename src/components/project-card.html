@@ -1,0 +1,44 @@
+<article
+    class="projectCard projectCard--listing"
+    cf-data-repository="repo.name"
+>
+    <div class="projectCard__layout">
+        <cf-include src="./components/project-title.html"></cf-include>
+        <cf-include src="./components/project-media.html"></cf-include>
+        <div class="projectCard__copy stack">
+            <cf-include src="./components/project-details.html"></cf-include>
+        </div>
+    </div>
+</article>
+
+<style>
+    .projectCard--listing .projectCard__layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-sm);
+    }
+
+    @container (min-width: 36rem) {
+        .projectCard--listing .projectCard__layout:has(.projectCard__preview) {
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+            column-gap: var(--space-lg);
+            row-gap: var(--space-xs);
+        }
+
+        .projectCard--listing .projectCard__copy {
+            grid-column: 1;
+        }
+
+        .projectCard--listing
+            .projectCard__layout
+            > :is(.projectCard__preview, .projectCard__previewLink) {
+            grid-column: 2;
+            grid-row: 1 / 3;
+            align-self: center;
+        }
+
+        .projectCard--listing .projectCard__title {
+            align-self: end;
+        }
+    }
+</style>

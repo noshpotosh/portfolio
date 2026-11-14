@@ -1,0 +1,200 @@
+<div class="screen-content projects-screen" id="projects-view">
+    <div class="page-header">
+        <cf-include src="./components/header.html">
+            <fieldset slot="actions" class="projectCategories cluster">
+                <legend class="sr-only">Project category</legend>
+                <label>
+                    <input
+                        type="radio"
+                        name="project-category"
+                        id="projects-work"
+                        value="work"
+                        checked
+                    />
+                    <span>Work</span>
+                </label>
+                <label>
+                    <input
+                        type="radio"
+                        name="project-category"
+                        id="projects-play"
+                        value="play"
+                    />
+                    <span>Play</span>
+                </label>
+            </fieldset>
+        </cf-include>
+
+        <h2 id="projects-title" class="page-label">Projects</h2>
+    </div>
+
+    <cf-data source="loadPortfolioProjects" name="projects">
+        <template>
+            <section
+                class="projectBrowser"
+                id="work-projects"
+                aria-label="Work projects"
+            >
+                <div class="projectBrowser__list">
+                    <cf-loop items="projects.work" as="repo">
+                        <template>
+                            <cf-include
+                                src="./components/project-card.html"
+                            ></cf-include>
+                        </template>
+
+                        <template data-state="empty">
+                            <p id="work-status" role="status">
+                                No projects have been selected for work yet.
+                            </p>
+                        </template>
+                    </cf-loop>
+                </div>
+            </section>
+
+            <section
+                class="projectBrowser"
+                id="play-projects"
+                aria-label="Play projects"
+            >
+                <div class="projectBrowser__list">
+                    <cf-loop items="projects.play" as="repo">
+                        <template>
+                            <cf-include
+                                src="./components/project-card.html"
+                            ></cf-include>
+                        </template>
+
+                        <template data-state="empty">
+                            <p id="play-status" role="status">
+                                No projects have been selected for play yet.
+                            </p>
+                        </template>
+                    </cf-loop>
+                </div>
+            </section>
+        </template>
+
+        <template data-state="loading">
+            <p role="status">Loading projects…</p>
+        </template>
+
+        <template data-state="error">
+            <p id="work-status" role="alert">
+                Projects could not load. Refresh to try again, or view my work
+                on GitHub.
+            </p>
+        </template>
+    </cf-data>
+</div>
+
+<style>
+    /* Category navigation and list layout belong to this view. */
+    .projectBrowser {
+        min-width: 0;
+    }
+
+    .projectBrowser__list {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        align-items: start;
+        gap: var(--space-lg);
+    }
+
+    :is(#work-status, #play-status) {
+        font-size: var(--text-small);
+        color: var(--content-muted);
+    }
+
+    .projectCategories {
+        position: relative;
+        isolation: isolate;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-xs);
+        margin: 0;
+        padding: var(--space-xs);
+        min-width: 0;
+        border: 1px solid var(--content-divider);
+        border-radius: var(--action-radius);
+        background: var(--content-highlight);
+    }
+
+    .projectCategories::before {
+        content: "";
+        position: absolute;
+        pointer-events: none;
+        inset-block: var(--space-xs);
+        left: var(--space-xs);
+        width: calc((100% - 3 * var(--space-xs)) / 2);
+        border-radius: var(--action-radius);
+        background: var(--content-yellow);
+        box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+        transform: translateX(0);
+        transition:
+            transform var(--interaction-duration) var(--interaction-easing),
+            background-color var(--interaction-duration)
+                var(--interaction-easing);
+    }
+
+    .projectCategories:has(#projects-play:checked)::before {
+        transform: translateX(calc(100% + var(--space-xs)));
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .projectCategories:has(input:hover:not(:checked))::before {
+            background: color-mix(in srgb, var(--content-yellow) 55%, white);
+        }
+
+        .projectCategories:has(#projects-work:hover)::before {
+            transform: translateX(0);
+        }
+
+        .projectCategories:has(#projects-play:hover)::before {
+            transform: translateX(calc(100% + var(--space-xs)));
+        }
+    }
+
+    .projectCategories label {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: var(--action-size);
+        padding: var(--space-sm) var(--space-md);
+        border-radius: var(--action-radius);
+        color: var(--content-muted);
+        font-size: var(--text-small);
+        font-weight: 700;
+        cursor: pointer;
+        transition: color var(--interaction-duration) var(--interaction-easing);
+    }
+
+    .projectCategories input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .projectCategories label span {
+        pointer-events: none;
+    }
+
+    .projectCategories label:hover {
+        color: var(--content-ink);
+    }
+
+    .projectCategories label:has(:checked) {
+        color: var(--content-heading);
+    }
+
+    .projects-screen:has(#projects-work:checked) #play-projects,
+    .projects-screen:has(#projects-play:checked) #work-projects {
+        display: none;
+    }
+</style>
