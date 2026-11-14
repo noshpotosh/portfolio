@@ -185,6 +185,6 @@ const { fixtures } = require('./helpers/browser-fixtures.cjs');
         assert.deepEqual(slowErrors, []);
         await slowContext.close();
 
-        console.log('Passed: single entrypoint, hash routes, Back/Forward, direct links, persistent shell, rapid navigation, GitHub data, case-study routes, category preservation, modified clicks, stale responses, safe Markdown, failures.');
+        console.log('Passed: single entrypoint, hash routes, Back/Forward, direct links, persistent shell, rapid navigation, GitHub data, case-study routes, category preservation, modified clicks, stale responses, safe Markdown, failures, JSON resume, client PDF downloads.');
     } finally { await browser.close(); }
 })().catch(error => {console.error(error);process.exitCode=1;});

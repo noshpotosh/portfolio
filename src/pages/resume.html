@@ -151,6 +151,253 @@
     </cf-data>
 </div>
 
+<script>
+    const RESUME_PDF_LIBRARY_PATH = "./vendor/jspdf.umd.min.js";
+    const RESUME_PDF_FILENAME_SUFFIX = "-Resume.pdf";
+    const RESUME_DOWNLOAD_MESSAGES = {
+        preparing: "Preparing PDF…",
+        ready: "PDF ready.",
+        failed: "PDF could not be created. Try again or use browser printing.",
+        overflow: "The résumé exceeds one page. Please use browser printing to save the full résumé.",
+    };
+    const RESUME_PDF_LAYOUT = {
+        pageWidth: 612,
+        pageHeight: 792,
+        margin: 43.2,
+        fontFamily: "helvetica",
+        regularFontStyle: "normal",
+        boldFontStyle: "bold",
+        nameFontSize: 22,
+        headingFontSize: 11,
+        bodyFontSize: 10.5,
+        metadataFontSize: 9.5,
+        contactFontSize: 9,
+        lineHeightFactor: 1.25,
+        nameSpacing: 5,
+        contactLineHeight: 12,
+        contactSpacing: 12,
+        sectionSpacing: 10,
+        headingSpacing: 3,
+        dividerWidth: 0.5,
+        dividerSpacing: 5,
+        entrySpacing: 4,
+        titleSpacing: 2,
+        metadataSpacing: 4,
+        bulletIndent: 12,
+        bulletSpacing: 3,
+        skillSpacing: 3,
+    };
+
+    /**
+     * Enable PDF downloads once résumé data loads and connect the download action.
+     * @returns {void}
+     */
+    function initializeResumeDownload() {
+        const resumeDataElement = document.getElementById("resume-data");
+        const downloadButton = document.querySelector(
+            "#resume-view .resume-download",
+        );
+        const downloadStatus = document.getElementById("resume-download-status");
+
+        resumeDataElement.addEventListener("cf:load", () => {
+            downloadButton.disabled = false;
+        });
+        downloadButton.addEventListener("click", () => {
+            downloadResumePdf(downloadButton, downloadStatus);
+        });
+    }
+
+    /**
+     * Save the résumé PDF, reporting progress or failure and restoring the button.
+     * @param {HTMLButtonElement} downloadButton - The page's PDF download button.
+     * @param {HTMLElement} downloadStatus - Live region for download status.
+     * @returns {Promise<void>}
+     */
+    async function downloadResumePdf(downloadButton, downloadStatus) {
+        downloadButton.disabled = true;
+        downloadStatus.textContent = RESUME_DOWNLOAD_MESSAGES.preparing;
+
+        try {
+            // Load the locally vendored jsPDF bundle only when downloading.
+            await import(new URL(RESUME_PDF_LIBRARY_PATH, document.baseURI));
+            const resume = await loadResume();
+            const pdf = createResumePdf(resume);
+            const filename = createResumePdfFilename(resume.name);
+
+            await pdf.save(filename, { returnPromise: true });
+            downloadStatus.textContent = RESUME_DOWNLOAD_MESSAGES.ready;
+        } catch (error) {
+            downloadStatus.textContent =
+                error.message === RESUME_DOWNLOAD_MESSAGES.overflow
+                    ? RESUME_DOWNLOAD_MESSAGES.overflow
+                    : RESUME_DOWNLOAD_MESSAGES.failed;
+        } finally {
+            downloadButton.disabled = false;
+        }
+    }
+
+    /**
+     * Render résumé data into a single Letter-size PDF with clickable contacts.
+     * @param {Object} resume - Résumé data returned by loadResume().
+     * @returns {Object} The jsPDF document, ready to save.
+     * @throws {Error} If paragraph content exceeds the one-page layout.
+     */
+    function createResumePdf(resume) {
+        const layout = RESUME_PDF_LAYOUT;
+        const pdf = new globalThis.jspdf.jsPDF({
+            unit: "pt",
+            format: "letter",
+            compress: true,
+        });
+        const contentWidth = layout.pageWidth - layout.margin * 2;
+        let cursorY = layout.margin;
+
+        pdf.setProperties({
+            title: `${resume.name} - Resume`,
+            author: resume.name,
+        });
+
+        drawParagraph(resume.name, {
+            fontSize: layout.nameFontSize,
+            bold: true,
+            spacingAfter: layout.nameSpacing,
+        });
+        drawContacts();
+        drawEntries("Experience", resume.experience);
+        drawEntries("Selected Project", resume.projects);
+
+        drawHeading("Skills");
+        for (const skill of resume.skills) {
+            drawParagraph(`${skill.label}: ${skill.description}`, {
+                spacingAfter: layout.skillSpacing,
+            });
+        }
+
+        drawHeading("Education");
+        drawParagraph(resume.education.school, {
+            fontSize: layout.headingFontSize,
+            bold: true,
+            spacingAfter: layout.titleSpacing,
+        });
+        drawParagraph(`${resume.education.degree} · ${resume.education.year}`);
+
+        return pdf;
+
+        function drawParagraph(
+            value,
+            {
+                fontSize = layout.bodyFontSize,
+                bold = false,
+                indent = 0,
+                spacingAfter = 0,
+            } = {},
+        ) {
+            pdf.setFont(
+                layout.fontFamily,
+                bold ? layout.boldFontStyle : layout.regularFontStyle,
+            );
+            pdf.setFontSize(fontSize);
+            const lines = pdf.splitTextToSize(
+                normalizeResumePdfText(value),
+                contentWidth - indent,
+            );
+            const paragraphHeight = lines.length * fontSize * layout.lineHeightFactor;
+
+            if (cursorY + paragraphHeight > layout.pageHeight - layout.margin) {
+                throw new Error(RESUME_DOWNLOAD_MESSAGES.overflow);
+            }
+
+            pdf.text(lines, layout.margin + indent, cursorY + fontSize, {
+                lineHeightFactor: layout.lineHeightFactor,
+            });
+            cursorY += paragraphHeight + spacingAfter;
+        }
+
+        function drawContacts() {
+            pdf.setFont(layout.fontFamily, layout.regularFontStyle);
+            pdf.setFontSize(layout.contactFontSize);
+            let cursorX = layout.margin;
+
+            for (const contact of [{ label: resume.location }, ...resume.contacts]) {
+                const contactLabel = normalizeResumePdfText(contact.label);
+                const contactWidth = pdf.getTextWidth(contactLabel);
+
+                if (
+                    cursorX > layout.margin &&
+                    cursorX + contactWidth > layout.margin + contentWidth
+                ) {
+                    cursorX = layout.margin;
+                    cursorY += layout.contactLineHeight;
+                }
+
+                pdf.text(contactLabel, cursorX, cursorY + layout.contactFontSize);
+                if (contact.href && /^(https?:|mailto:|tel:)/i.test(contact.href)) {
+                    pdf.link(cursorX, cursorY, contactWidth, layout.contactLineHeight, {
+                        url: contact.href,
+                    });
+                }
+                cursorX += contactWidth + layout.contactSpacing;
+            }
+
+            cursorY += layout.contactLineHeight;
+        }
+
+        function drawEntries(sectionLabel, entries) {
+            drawHeading(sectionLabel);
+
+            for (const [entryIndex, entry] of entries.entries()) {
+                if (entryIndex > 0) cursorY += layout.entrySpacing;
+
+                drawParagraph(entry.title, {
+                    fontSize: layout.headingFontSize,
+                    bold: true,
+                    spacingAfter: layout.titleSpacing,
+                });
+                drawParagraph([entry.organization, ...entry.details].join(" · "), {
+                    fontSize: layout.metadataFontSize,
+                    spacingAfter: layout.metadataSpacing,
+                });
+
+                for (const bullet of entry.bullets) {
+                    pdf.setFont(layout.fontFamily, layout.regularFontStyle);
+                    pdf.setFontSize(layout.bodyFontSize);
+                    pdf.text("•", layout.margin, cursorY + layout.bodyFontSize);
+                    drawParagraph(bullet, {
+                        indent: layout.bulletIndent,
+                        spacingAfter: layout.bulletSpacing,
+                    });
+                }
+            }
+        }
+
+        function drawHeading(label) {
+            cursorY += layout.sectionSpacing;
+            drawParagraph(label.toUpperCase(), {
+                fontSize: layout.headingFontSize,
+                bold: true,
+                spacingAfter: layout.headingSpacing,
+            });
+            pdf.setLineWidth(layout.dividerWidth);
+            pdf.line(layout.margin, cursorY, layout.margin + contentWidth, cursorY);
+            cursorY += layout.dividerSpacing;
+        }
+    }
+
+    function createResumePdfFilename(name) {
+        const filenameStem = name
+            .replace(/[^a-z0-9]+/gi, "-")
+            .replace(/^-|-$/g, "");
+        return `${filenameStem}${RESUME_PDF_FILENAME_SUFFIX}`;
+    }
+
+    function normalizeResumePdfText(value) {
+        // Use portable punctuation with the built-in Helvetica font.
+        return String(value).replace(/[–—‑]/g, "-").replace(/[‘’]/g, "'");
+    }
+
+    initializeResumeDownload();
+</script>
+
 <style>
     #resume-download-status:empty {
         display: none;
