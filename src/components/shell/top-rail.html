@@ -1,0 +1,283 @@
+<nav id="top-rail" class="shell__top topRail" aria-label="Portfolio views">
+    <ul class="topRail__pages">
+        <li>
+            <a class="topRail__page" id="view-home" href="#home">
+                <span class="topRail__cartridge">
+                    <span class="topRail__label">
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            focusable="false"
+                        >
+                            <path d="m3 11 9-8 9 8v10h-7v-7h-4v7H3Z" />
+                        </svg>
+                        <span>Home</span>
+                    </span>
+                </span>
+            </a>
+        </li>
+
+
+    </ul>
+</nav>
+
+<style>
+    .topRail {
+        container-type: inline-size;
+        padding: 6px;
+        border: 1px solid transparent;
+        color: var(--color-ink);
+        min-width: 0;
+        overflow-wrap: anywhere;
+
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        place-items: center;
+        text-align: center;
+    }
+
+    .topRail__pages {
+        --cartridge-insertion: 12px;
+        --cartridge-motion: 300ms cubic-bezier(0.25, 0.1, 0.25, 1);
+        --tab-gap: clamp(var(--space-xs), 2cqi, var(--space-lg));
+        position: relative;
+        display: flex;
+        gap: var(--tab-gap);
+        width: min(100%, 38rem);
+        margin: 0;
+        padding: var(--space-sm) var(--space-xs) 0;
+        list-style: none;
+    }
+
+    .topRail__pages li {
+        position: relative;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .topRail__page {
+        --cartridge-color: var(--color-cartridge-red);
+        --cartridge-light: color-mix(
+            in srgb,
+            var(--cartridge-color) 65%,
+            var(--shell-light-color)
+        );
+        --cartridge-grip-width: clamp(4px, 1.5cqi, 10px);
+        position: relative;
+        isolation: isolate;
+        display: flex;
+        align-items: stretch;
+        min-height: 4rem;
+        padding: 0;
+        color: var(--color-paper);
+        font:
+            bold clamp(0.65rem, 0.35rem + 1.5cqi, 1rem) / 1.2 Menlo,
+            Consolas,
+            monospace;
+        letter-spacing: 0.025em;
+        text-decoration: none;
+        cursor: pointer;
+        text-transform: uppercase;
+        white-space: nowrap;
+        clip-path: inset(-5px -5px 0);
+    }
+
+    .topRail__page[id="view-projects"] {
+        --cartridge-color: var(--color-cartridge-gold);
+        color: var(--color-ink);
+    }
+
+    .topRail__page[id="view-resume"] {
+        --cartridge-color: var(--color-cartridge-blue);
+    }
+
+    .topRail__cartridge {
+        position: relative;
+        isolation: isolate;
+        display: flex;
+        width: 100%;
+        padding: 0.65rem
+            calc(var(--cartridge-grip-width) + clamp(2px, 1cqi, 10px)) 1.1rem;
+        transform: translateY(0);
+        transition: transform var(--cartridge-motion);
+        will-change: transform;
+    }
+
+    .topRail__cartridge::before,
+    .topRail__cartridge::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        clip-path: polygon(
+            10px 0,
+            calc(100% - 10px) 0,
+            100% 10px,
+            100% 100%,
+            0 100%,
+            0 10px
+        );
+        background: var(--shell-border-color);
+        pointer-events: none;
+    }
+
+    .topRail__cartridge::after {
+        inset: 3px;
+        z-index: -1;
+        clip-path: polygon(
+            8px 0,
+            calc(100% - 8px) 0,
+            100% 8px,
+            100% 100%,
+            0 100%,
+            0 8px
+        );
+        background: linear-gradient(
+            calc(var(--shell-light-angle) * 1deg),
+            var(--cartridge-light),
+            var(--cartridge-color) 65%
+        );
+        box-shadow: inset 0 2px 0 var(--shell-bevel-light);
+    }
+
+    .topRail__label {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(0px, 2cqi - 0.4rem, var(--space-sm));
+        width: 100%;
+        padding: var(--space-xs) clamp(0rem, 1cqi - 0.15rem, 0.35rem);
+        border: 3px solid transparent;
+        border-radius: var(--action-radius);
+        background-color: var(--cartridge-color);
+        box-shadow:
+            inset 0 2px 3px
+                color-mix(in srgb, var(--cartridge-color), black 35%),
+            0 1px 0 var(--shell-bevel-light);
+    }
+
+    .topRail__label::before,
+    .topRail__label::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: var(--cartridge-grip-width);
+        height: 24px;
+        transform: translateY(-50%);
+        background: repeating-linear-gradient(
+            to bottom,
+            color-mix(in srgb, var(--cartridge-color), black 40%) 0 1px,
+            color-mix(in srgb, var(--cartridge-color), black 18%) 1px 4px,
+            var(--shell-bevel-light) 4px 5px,
+            transparent 5px 8px
+        );
+        pointer-events: none;
+    }
+
+    .topRail__label::before {
+        right: calc(100% + 3px);
+    }
+
+    .topRail__label::after {
+        left: calc(100% + 3px);
+    }
+
+    .topRail__label svg {
+        width: clamp(0rem, 10cqi - 2.2rem, 1.1rem);
+        height: clamp(0rem, 10cqi - 2.2rem, 1.1rem);
+        flex-shrink: 0;
+        fill: currentColor;
+    }
+
+    .topRail__page:hover .topRail__label {
+        background-color: color-mix(
+            in srgb,
+            var(--cartridge-color) 85%,
+            var(--cartridge-light)
+        );
+    }
+
+    .topRail__label {
+        transition: background-color 160ms ease-out;
+    }
+
+    .topRail__page:active .topRail__cartridge {
+        transform: translateY(3px);
+    }
+
+    .topRail__page[aria-current="page"] .topRail__cartridge {
+        transform: translateY(var(--cartridge-insertion));
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .topRail__cartridge,
+        .topRail__label {
+            transition: none;
+        }
+
+        .topRail__cartridge {
+            will-change: auto;
+        }
+    }
+
+    /* Preserve label space when users enlarge text. */
+    @container (max-width: 14rem) {
+        .topRail__page {
+            min-height: 3rem;
+            white-space: normal;
+        }
+
+        .topRail__cartridge {
+            min-width: 0;
+            padding: 0.25rem 0 0.5rem;
+        }
+
+        .topRail__label {
+            min-width: 0;
+            padding-inline: 0;
+            border-width: 1px;
+        }
+    }
+
+    .topRail__pages li::before {
+        content: "";
+        display: none;
+        position: absolute;
+        top: calc(-0.65rem - var(--space-sm));
+        left: 50%;
+        width: var(--space-lg);
+        height: 0.65rem;
+        transform: translateX(-50%);
+        background: var(--color-ink);
+        clip-path: polygon(0 0, 100% 0, 50% 100%);
+        pointer-events: none;
+    }
+
+    .topRail__pages li:has([aria-current="page"])::before {
+        display: block;
+    }
+
+    @media (max-width: 48rem) {
+        .topRail__pages li::before {
+            top: calc(-0.65rem - var(--space-xs));
+            background: var(--color-on-dark);
+        }
+    }
+
+    @media (hover: hover) {
+        .topRail__pages:has(.topRail__page:hover) li::before {
+            display: none;
+        }
+
+        .topRail__pages:has(.topRail__page:hover)
+            li:has(.topRail__page:hover)::before {
+            display: block;
+        }
+    }
+
+    .topRail__page:focus-visible .topRail__label {
+        outline: 3px dashed var(--color-paper);
+        outline-offset: 3px;
+    }
+</style>

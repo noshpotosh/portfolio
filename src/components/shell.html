@@ -1,6 +1,7 @@
 <div class="shell">
     <cf-include src="./components/shell/shell-finish.html"></cf-include>
     <cf-include src="./components/shell/brand-notch.html"></cf-include>
+    <cf-include src="./components/shell/top-rail.html"></cf-include>
     <cf-include src="./components/shell/speaker-notch.html"></cf-include>
     <cf-include src="./components/shell/left-rail.html"></cf-include>
 
@@ -18,6 +19,33 @@
 
     <cf-include src="./components/shell/bottom-rail.html"></cf-include>
 </div>
+
+<script id="resume-loader">
+    const RESUME_DATA_PATH = "./data/resume.json";
+    const RESUME_TIMEOUT_MS = 10000;
+
+    let resumeContentPromise;
+
+    /**
+     * Share one résumé request between headers, content, and PDF downloads.
+     * @returns {Promise<Object>} Résumé data; rejects if the request fails.
+     */
+    function loadResume() {
+        if (!resumeContentPromise) {
+            resumeContentPromise = fetch(
+                new URL(RESUME_DATA_PATH, document.baseURI),
+                {
+                    signal: AbortSignal.timeout(RESUME_TIMEOUT_MS),
+                },
+            ).then((response) => {
+                if (!response.ok) throw new Error("Résumé could not load.");
+                return response.json();
+            });
+        }
+
+        return resumeContentPromise;
+    }
+</script>
 
 <style>
     /* Console sizing, outline geometry, and the recessed screen frame. */

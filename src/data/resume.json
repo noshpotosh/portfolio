@@ -1,0 +1,91 @@
+{
+  "name": "Noah Stewart",
+  "title": "Software engineer",
+  "location": "Chicago, Illinois",
+  "contacts": [
+    {
+      "label": "stewartnoahj@gmail.com",
+      "href": "mailto:stewartnoahj@gmail.com"
+    },
+    {
+      "label": "noshpotosh.github.io/site",
+      "href": "https://noshpotosh.github.io/site/"
+    },
+    {
+      "label": "github.com/noshpotosh",
+      "href": "https://github.com/noshpotosh"
+    },
+    {
+      "label": "linkedin.com/in/noah-stewart-dev",
+      "href": "https://www.linkedin.com/in/noah-stewart-dev/"
+    }
+  ],
+  "experience": [
+    {
+      "title": "Software Engineer",
+      "organization": "Commodity & Ingredient Hedging",
+      "details": [
+        "Jul 2023–Present"
+      ],
+      "bullets": [
+        "Designed an internal REST API framework behind 100+ endpoints across 26 modules, standardizing authentication, authorization, validation, and error handling, and onboarded engineers to contribute.",
+        "Proposed and led React and TypeScript adoption in a legacy CFML platform; co-developed Vite tooling and a shared library of 50+ components supporting 15 product pages and widgets.",
+        "Built an AI-assisted triage workspace integrating Jira, Sentry, and Bitbucket that uses Git history to route each bug to the engineers who know that code best.",
+        "Migrated 11K+ live and 330K+ historical cash-bid records to a normalized schema with versioned APIs, preserving contract, web, and mobile workflows with transactional tooling and a compatibility adapter."
+      ]
+    },
+    {
+      "title": "Associate Software Developer",
+      "organization": "Sentry Insurance",
+      "details": [
+        "Jan 2023–Jul 2023"
+      ],
+      "bullets": [
+        "Built an internal Java, Spring, and SQL application that let business users add state-specific insurance discounts without filing database tickets, and fixed production defects that blocked policies from binding."
+      ]
+    },
+    {
+      "title": "Software Engineer Intern",
+      "organization": "Veterans United Home Loans",
+      "details": [
+        "May 2022–Aug 2022"
+      ],
+      "bullets": [
+        "Built PDF parsing, signed-field validation, and document-routing workflows for a closing-document automation system that saved 17,000 hours of manual work annually."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "title": "Ehlenbach’s Cheese Chalet",
+      "organization": "Solo Developer, Client Project",
+      "details": [
+        "Sep 2026–Present",
+        "In development"
+      ],
+      "bullets": [
+        "Independently developing a custom Shopify storefront from client requirements using Liquid, JavaScript, and CSS, with product variants, quick-add shopping, and an editable cart.",
+        "Building merchant-editable sections for photos, menus, and store information, with automated template tests and Playwright coverage across Chromium and WebKit."
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "label": "Languages",
+      "description": "TypeScript, JavaScript, Java, C#, SQL, CFML, HTML, CSS, Liquid"
+    },
+    {
+      "label": "Frameworks & platforms",
+      "description": "React, Spring, .NET, Shopify, REST APIs"
+    },
+    {
+      "label": "Tools and testing",
+      "description": "Git, Docker, Vite, Swagger, Playwright, Sentry (error monitoring)"
+    }
+  ],
+  "education": {
+    "school": "University of Wisconsin–Madison",
+    "degree": "B.S. Computer Science",
+    "year": "2022"
+  }
+}
