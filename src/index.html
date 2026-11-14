@@ -11,6 +11,81 @@
         <script defer src="./vendor/cfjs.js"></script>
     </head>
     <body data-page="home">
-        <cf-include src="./components/shell.html"><cf-include src="./pages/home.html"></cf-include></cf-include>
+        <cf-include src="./components/shell.html">
+            <div class="page-panel" data-view="home" data-title="Home">
+                <cf-include src="./pages/home.html"></cf-include>
+            </div>
+        </cf-include>
+        <noscript
+            ><p>Please enable JavaScript to view this portfolio.</p></noscript
+        >
+        <script id="navigation">
+            // One document with explicit persistent views. No server routing is required.
+            let panels = [];
+            let currentPage;
+
+            function showPage() {
+                if (!panels.length) return;
+                const hash = location.hash.slice(1);
+                const study = false;
+                const selected = panels.find(
+                    (panel) =>
+                        panel.dataset.view === (study ? "case-study" : hash),
+                );
+                // Leave in-page anchors alone after the application has mounted.
+                if (hash && !selected && currentPage) return;
+                const active = selected || panels[0];
+                const page = active.dataset.view;
+                const route = study ? hash : page;
+                if (route === currentPage) return;
+                const focusPage = Boolean(currentPage);
+                currentPage = route;
+                document.body.dataset.page = page;
+                document.title =
+                    page === "home"
+                        ? "Noah Stewart — Portfolio"
+                        : `${active.dataset.title} — Noah Stewart`;
+                for (const panel of panels) {
+                    panel.hidden = panel !== active;
+                    const link = document.getElementById(
+                        `view-${panel.dataset.view}`,
+                    );
+                    if (!link) continue;
+                    if (
+                        panel === active ||
+                        (study && panel.dataset.view === "projects")
+                    )
+                        link.setAttribute("aria-current", "page");
+                    else link.removeAttribute("aria-current");
+                }
+                if (focusPage) {
+                    const heading = active.querySelector("h1");
+                    if (heading) {
+                        heading.tabIndex = -1;
+                        heading.focus({ preventScroll: true });
+                    }
+                    window.scrollTo(0, 0);
+                }
+            }
+
+            document.addEventListener("cf:load", () => {
+                panels = [
+                    ...document.querySelectorAll(
+                        ".shellScreen__body > [data-view]",
+                    ),
+                ];
+                showPage();
+            });
+            window.addEventListener("hashchange", showPage);
+
+            document.addEventListener("cf:error", (event) => {
+                if (event.target.matches("cf-data")) return;
+                const message = document.createElement("p");
+                message.setAttribute("role", "alert");
+                message.textContent =
+                    "This section could not load. Refresh the page to try again.";
+                event.target.replaceChildren(message);
+            });
+        </script>
     </body>
 </html>
