@@ -1,0 +1,478 @@
+<aside
+    id="right-rail"
+    class="shell__activity activityRail"
+    tabindex="0"
+    aria-labelledby="github-activity-title"
+>
+    <header class="activityRail__header cluster">
+        <h2 id="github-activity-title">GitHub Activity</h2>
+    </header>
+
+    <div id="github-activity-content" class="activityRail__content">
+        <section
+            class="activityRail__contributions"
+            aria-label="GitHub contribution graph"
+        >
+            <cf-data source="loadActivityContributions" name="contributions">
+                <template>
+                    <cf-if test="contributions.days.length">
+                        <template>
+                            <div
+                                id="contribution-grid"
+                                class="activityRail__grid"
+                                role="img"
+                                cf-aria-label="contributions.label"
+                            >
+                                <cf-loop items="contributions.days" as="day">
+                                    <template>
+                                        <span
+                                            cf-class="day.className"
+                                            cf-title="day.description"
+                                        ></span>
+                                    </template>
+                                </cf-loop>
+                            </div>
+                        </template>
+                    </cf-if>
+                    <p
+                        id="contribution-summary"
+                        class="activityRail__summary"
+                        cf-text="contributions.summary"
+                    ></p>
+                </template>
+                <template data-state="loading">
+                    <p
+                        id="contribution-summary"
+                        class="activityRail__summary"
+                    >
+                        Loading contributions…
+                    </p>
+                </template>
+                <template data-state="error">
+                    <p
+                        id="contribution-summary"
+                        class="activityRail__summary"
+                    >
+                        Contribution graph is unavailable right now.
+                    </p>
+                </template>
+            </cf-data>
+        </section>
+
+        <section
+            class="activityRail__latest"
+            aria-label="Recent commits"
+            tabindex="0"
+        >
+            <cf-data source="loadActivityCommits" name="commits">
+                <template>
+                    <cf-if test="commits.length">
+                        <template>
+                            <ol class="activityRail__list" id="activity-list">
+                                <cf-loop items="commits" as="commit">
+                                    <template>
+                                        <li class="activityRail__item">
+                                            <div class="activityRail__heading cluster">
+                                                <h4>
+                                                    <a
+                                                        class="activityRail__repository"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        cf-href="commit.repositoryURL"
+                                                        cf-text="commit.repositoryName"
+                                                    ></a>
+                                                </h4>
+                                                <time
+                                                    class="activityRail__age"
+                                                    cf-datetime="commit.date"
+                                                    cf-text="commit.displayDate"
+                                                ></time>
+                                            </div>
+                                            <p
+                                                class="activityRail__message"
+                                                cf-text="commit.message"
+                                            ></p>
+                                            <div class="activityRail__meta cluster">
+                                                <a
+                                                    class="activityRail__commit"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    cf-href="commit.url"
+                                                    cf-text="commit.shortHash"
+                                                    cf-aria-label="commit.label"
+                                                ></a>
+                                            </div>
+                                        </li>
+                                    </template>
+                                </cf-loop>
+                            </ol>
+                        </template>
+                        <template data-state="else">
+                            <p
+                                class="activityRail__fallback"
+                                id="activity-fallback"
+                                role="status"
+                            >
+                                Recent activity is unavailable right now. See my work on GitHub.
+                            </p>
+                        </template>
+                    </cf-if>
+                </template>
+                <template data-state="loading">
+                    <p
+                        class="activityRail__fallback"
+                        id="activity-fallback"
+                        role="status"
+                    >
+                        Loading recent activity…
+                    </p>
+                </template>
+                <template data-state="error">
+                    <p
+                        class="activityRail__fallback"
+                        id="activity-fallback"
+                        role="status"
+                    >
+                        Recent activity is unavailable right now. See my work on GitHub.
+                    </p>
+                </template>
+            </cf-data>
+        </section>
+
+        <footer class="activityRail__footer cluster">
+            <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="currentColor"
+                aria-hidden="true"
+            >
+                <path
+                    d="M12 .75a11.25 11.25 0 0 0-3.56 21.92c.56.1.77-.24.77-.54v-2.1c-3.13.68-3.79-1.33-3.79-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.73 1.16 1.73 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.5-.28-5.13-1.25-5.13-5.56 0-1.23.44-2.23 1.16-3.01-.12-.28-.5-1.43.11-2.98 0 0 .95-.3 3.09 1.15a10.76 10.76 0 0 1 5.62 0c2.15-1.46 3.09-1.15 3.09-1.15.61 1.55.23 2.7.11 2.98.72.78 1.16 1.78 1.16 3.01 0 4.32-2.63 5.28-5.14 5.56.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.77.54A11.25 11.25 0 0 0 12 .75Z"
+                />
+            </svg>
+
+            <a
+                href="https://github.com/noshpotosh"
+                target="_blank"
+                rel="noopener noreferrer"
+                >View on GitHub</a
+            ><span aria-hidden="true">→</span>
+        </footer>
+    </div>
+</aside>
+
+<script>
+    const FEED_TIMEOUT_MS = 10000;
+    const COMMIT_LIMIT = 15;
+    const CONTRIBUTION_WEEKS = 26;
+    const DAYS_PER_WEEK = 7;
+    const SHORT_COMMIT_LENGTH = 7;
+    const DISPLAY_LOCALE = "en-US";
+
+    /**
+     * Prepare the latest contribution weeks, including the current partial week.
+     * @returns {Promise<Object>} Days and summary text for the contribution template.
+     */
+    async function loadActivityContributions() {
+        // Resolve the shared GitHub user when CFJS invokes this provider, after
+        // the shell's classic scripts have all been activated.
+        const feed = await fetchActivityFeed(
+            `https://github-contributions-api.jogruber.de/v4/${githubUser}?y=last`,
+        );
+        const sortedDays = (feed.contributions || []).sort((firstDay, secondDay) =>
+            firstDay.date.localeCompare(secondDay.date),
+        );
+
+        if (!sortedDays.length) {
+            return {
+                days: [],
+                summary: "Contribution graph is unavailable right now.",
+            };
+        }
+
+        const lastWeekday = new Date(
+            `${sortedDays.at(-1).date}T00:00:00Z`,
+        ).getUTCDay();
+        const visibleDayCount =
+            (CONTRIBUTION_WEEKS - 1) * DAYS_PER_WEEK + lastWeekday + 1;
+        const recentDays = sortedDays.slice(-visibleDayCount);
+        const totalContributions = recentDays.reduce(
+            (total, day) => total + day.count,
+            0,
+        );
+
+        return {
+            days: recentDays.map((day) => ({
+                className: `activityRail__day activityRail__day--level${day.level}`,
+                description: `${day.count} contributions on ${day.date}`,
+            })),
+            label: `${totalContributions} contributions over the last ${CONTRIBUTION_WEEKS} weeks. Brighter squares indicate more contributions.`,
+            summary: `${totalContributions.toLocaleString(DISPLAY_LOCALE)} contributions · last ${CONTRIBUTION_WEEKS} weeks`,
+        };
+    }
+
+    /**
+     * Prepare recent commits with UTC dates and single-line messages.
+     * @returns {Promise<Object[]>} Commit entries for the activity template.
+     */
+    async function loadActivityCommits() {
+        const feed = await fetchActivityFeed(
+            `https://api.github.com/search/commits?q=author:${githubUser}&sort=committer-date&order=desc&per_page=${COMMIT_LIMIT}`,
+        );
+        const commitDateFormatter = new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+            timeZone: "UTC",
+        });
+
+        return (feed.items || []).slice(0, COMMIT_LIMIT).map((entry) => {
+            const shortHash = entry.sha.slice(0, SHORT_COMMIT_LENGTH);
+            const date = entry.commit.committer.date;
+
+            return {
+                repositoryURL: entry.repository.html_url,
+                repositoryName: entry.repository.name,
+                date,
+                displayDate: commitDateFormatter.format(new Date(date)),
+                message: entry.commit.message.split("\n")[0],
+                url: entry.html_url,
+                shortHash,
+                label: `View commit ${shortHash}`,
+            };
+        });
+    }
+
+    async function fetchActivityFeed(url) {
+        const response = await fetch(url, {
+            signal: AbortSignal.timeout(FEED_TIMEOUT_MS),
+        });
+
+        if (!response.ok) {
+            throw new Error(`GitHub responded ${response.status}`);
+        }
+
+        return response.json();
+    }
+</script>
+
+<style>
+    .activityRail cf-data {
+        display: block;
+    }
+
+    .activityRail a {
+        color: var(--activity-accent);
+    }
+
+    .activityRail {
+        padding: 6px;
+        border: 1px solid transparent;
+        color: var(--color-ink);
+        min-width: 0;
+        overflow-wrap: anywhere;
+
+        --activity-text: var(--color-on-dark);
+        --activity-muted: var(--color-muted-on-dark);
+        --activity-accent: var(--color-accent);
+        --activity-divider: var(--color-divider-on-dark);
+        display: flex;
+        flex-direction: column;
+        font:
+            0.72rem / 1.4 ui-monospace,
+            SFMono-Regular,
+            Consolas,
+            monospace;
+        overflow: hidden;
+    }
+
+    .activityRail h2,
+    .activityRail h3,
+    .activityRail h4,
+    .activityRail p {
+        margin: 0;
+    }
+
+    .activityRail__content {
+        display: contents;
+    }
+
+    .activityRail__header {
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        --cluster-space: var(--space-sm);
+    }
+
+    .activityRail__header h2 {
+        color: var(--activity-text);
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: -0.04em;
+    }
+
+    .activityRail h3 {
+        font-size: 0.83rem;
+        font-weight: 500;
+    }
+
+    .activityRail__contributions {
+        padding-top: 16px;
+    }
+
+    .activityRail__grid:not([hidden]) {
+        display: grid;
+        grid-template-rows: repeat(7, 1fr);
+        grid-template-columns: repeat(26, minmax(0, 1fr));
+        grid-auto-flow: column;
+        gap: 2px;
+    }
+
+    .activityRail__day {
+        aspect-ratio: 1;
+        border-radius: 1px;
+        background: var(--activity-divider);
+    }
+
+    .activityRail__day.activityRail__day--level1 {
+        background: var(--color-link);
+    }
+
+    .activityRail__day.activityRail__day--level2 {
+        background: var(--color-shell);
+    }
+
+    .activityRail__day.activityRail__day--level3 {
+        background: var(--color-shell-light);
+    }
+
+    .activityRail__day.activityRail__day--level4 {
+        background: var(--color-paper);
+    }
+
+    .activityRail__summary {
+        padding-top: 6px;
+        color: var(--activity-muted);
+        font-size: 0.65rem;
+    }
+
+    .activityRail__latest {
+        margin-top: 12px;
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-shell) transparent;
+        padding-right: 6px;
+    }
+
+    .activityRail__message {
+        color: var(--activity-text);
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+    }
+
+    .activityRail__list {
+        list-style: none;
+        margin: 12px 0 0 7px;
+        padding: 0;
+    }
+
+    .activityRail__item {
+        position: relative;
+        padding: 0 0 12px 16px;
+        border-left: 2px solid var(--color-shell);
+    }
+
+    .activityRail__item:last-child {
+        border-color: transparent;
+        padding-bottom: 0;
+    }
+
+    .activityRail__item::before {
+        content: "";
+        position: absolute;
+        top: 4px;
+        left: -6px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: radial-gradient(
+            circle at 35% 30%,
+            color-mix(in srgb, var(--color-mario-red) 55%, var(--color-paper)),
+            var(--color-mario-red) 55%,
+            color-mix(in srgb, var(--color-mario-red) 75%, var(--color-ink))
+        );
+        box-shadow:
+            0 0 0 2px var(--color-ink),
+            0 0 0 3px var(--color-shell);
+    }
+
+    .activityRail__heading {
+        flex-wrap: nowrap;
+        align-items: baseline;
+        justify-content: space-between;
+        --cluster-space: var(--space-sm);
+    }
+
+    .activityRail__heading h4 {
+        color: var(--activity-accent);
+        font-size: 0.78rem;
+        font-weight: 600;
+    }
+
+    .activityRail__age {
+        flex-shrink: 0;
+        color: var(--activity-muted);
+        font-size: 0.65rem;
+    }
+
+    .activityRail__heading h4 a {
+        color: inherit;
+        text-decoration: underline;
+        text-decoration-color: transparent;
+    }
+
+    .activityRail__heading h4 a:is(:hover, :focus-visible) {
+        text-decoration-color: currentColor;
+    }
+
+    .activityRail a:is(:hover, :focus-visible) {
+        color: var(--color-on-dark);
+    }
+
+    .activityRail__fallback {
+        margin-top: 12px;
+        color: var(--activity-muted);
+        font-size: 0.75rem;
+    }
+
+    .activityRail__meta {
+        flex-wrap: nowrap;
+        --cluster-space: var(--space-sm);
+        margin-top: 4px;
+        color: var(--activity-accent);
+    }
+
+    .activityRail__branchIcon {
+        font-size: 1.1rem;
+        line-height: 1;
+    }
+
+    .activityRail__meta code {
+        margin-left: 10px;
+        color: var(--activity-muted);
+        font: inherit;
+    }
+
+    .activityRail__footer {
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        --cluster-space: var(--space-sm);
+        margin-top: auto;
+        padding-top: 12px;
+        color: var(--activity-accent);
+    }
+</style>
