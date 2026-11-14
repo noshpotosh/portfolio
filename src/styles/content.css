@@ -1,0 +1,242 @@
+/* Shared reading rhythm and controls. */
+:root {
+    --content-leading: 1.55;
+    --content-radius: 5px;
+    --action-radius: 6px;
+    --action-size: 44px;
+    --page-divider: 2px solid var(--content-divider);
+    --section-divider: 1px solid var(--content-divider);
+}
+
+.screen-content {
+    flex: 1 0 auto;
+    container-type: inline-size;
+    padding: var(--content-inset);
+    color: var(--content-ink);
+    background: var(--color-paper);
+    font: var(--text-body) / 1.5 var(--font-content);
+}
+.screen-content :where(h1, h2, h3, h4, h5, h6) {
+    color: var(--content-heading);
+}
+.screen-content :focus-visible,
+.screen-content label:has(> input:focus-visible) {
+    outline: 3px solid var(--content-link);
+    outline-offset: 3px;
+}
+.screen-content :where(button, input, select) {
+    font: inherit;
+}
+.screen-content button {
+    cursor: pointer;
+}
+.screen-content a:where(:not(.action)) {
+    color: var(--content-link);
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-skip-ink: none;
+}
+.screen-content a:where(:not(.action)):is(:hover, :focus-visible) {
+    color: color-mix(in srgb, var(--content-link) 85%, white);
+}
+.page-header {
+    padding-bottom: var(--space-lg);
+    border-bottom: var(--page-divider);
+    margin-bottom: var(--content-spacing);
+}
+.page-label {
+    color: var(--content-heading);
+    margin-top: var(--space-sm);
+    font: 600 var(--text-small) / 1.4 var(--font-label);
+    text-transform: uppercase;
+}
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    font: 600 var(--text-small) / 1.4 var(--font-label);
+    text-transform: uppercase;
+    letter-spacing: .025em;
+}
+.action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    min-height: var(--action-size);
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--content-action);
+    border-radius: var(--action-radius);
+    color: var(--content-on-action);
+    background-color: var(--action-background, var(--content-action));
+    font: 600 var(--text-small) / 1.3 var(--font-content);
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+.action:where(:not(:disabled, [aria-disabled="true"])):is(:hover, :focus-visible) {
+    background-color: var(--action-hover-background, var(--content-action-hover));
+}
+.action--secondary {
+    --action-background: transparent;
+    --action-hover-background: var(--content-highlight);
+    color: var(--content-ink);
+    border-color: var(--content-ink);
+}
+.screen-content .action:is(:disabled, [aria-disabled="true"]) {
+    color: var(--content-muted);
+    border-color: var(--content-divider);
+    background: var(--content-divider);
+    box-shadow: none;
+    cursor: default;
+}
+
+/* Shared GitHub cards. View-specific layouts live in Projects and Featured. */
+.projectCard {
+    min-width: 0;
+}
+.projectCard__layout {
+    overflow-wrap: anywhere;
+    position: relative;
+    min-width: 0;
+    padding: var(--space-md);
+    border: 1px solid var(--content-divider);
+    border-radius: var(--action-radius);
+    list-style: none;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--color-paper) 25%, white), var(--content-highlight));
+    font: inherit;
+}
+.projectCard__preview {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+    padding: var(--space-sm);
+    border: 1px solid var(--content-divider);
+    border-radius: var(--content-radius);
+    background: color-mix(in srgb, var(--color-shell) 20%, white);
+    transition: border-color var(--interaction-duration) var(--interaction-easing);
+}
+.projectCard__previewLink:is(:hover, :focus-visible) .projectCard__preview {
+    border-color: var(--content-link);
+}
+.projectCard__previewLink {
+    width: 100%;
+    display: block;
+    position: relative;
+    border-radius: var(--content-radius);
+}
+.projectCard__icon {
+    width: 2rem;
+    height: 2rem;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+.projectCard__previewBadge {
+    position: absolute;
+    right: var(--space-sm);
+    bottom: var(--space-sm);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--content-radius);
+    background: #18202b;
+    color: #fff;
+    font-size: var(--text-small);
+    line-height: 1.5;
+}
+.projectCard__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--content-heading);
+    margin: 0;
+    font-size: var(--text-heading-md);
+    line-height: 1.25;
+    letter-spacing: -.025em;
+}
+.projectCard__description {
+    max-width: 62ch;
+    line-height: var(--content-leading);
+}
+/* Card variants configure shared copy rhythm without changing markup order. */
+.projectCard__copy {
+    --stack-space: var(--card-copy-space, var(--space-sm));
+    align-items: start;
+    min-width: 0;
+}
+.projectCard__technologies {
+    color: var(--content-muted);
+    margin: 0;
+    font: inherit;
+    font-size: var(--text-small);
+}
+.projectCard__actions {
+    --cluster-space: var(--space-sm);
+    align-self: flex-start;
+}
+
+/* Project actions echo the yellow console controls. */
+.projectCard__studyLink {
+    --action-background: var(--content-yellow);
+    --action-hover-background: color-mix(in srgb, var(--content-yellow) 65%, white);
+    color: var(--content-heading);
+    border-color: color-mix(in srgb, var(--content-yellow) 75%, #946000);
+    background-image: linear-gradient(rgb(255 255 255 / .55), transparent);
+    box-shadow: inset 0 1px 0 var(--content-highlight), 0 2px 3px rgb(121 83 0 / 0.15);
+}
+.projectCard__repositoryLink {
+    --action-hover-background: color-mix(in srgb, var(--content-link) 15%, var(--color-paper));
+    color: var(--content-link);
+    padding-inline: var(--space-xs);
+    border-color: transparent;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* Reading content, including browser-rendered case-study Markdown. */
+.prose {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    line-height: var(--content-leading);
+    --flow-space: var(--space-lg);
+}
+.prose :where(h1, h2, h3, h4, h5, h6) {
+    line-height: 1.25;
+    margin-block: var(--space-xl) var(--space-sm);
+}
+.prose :where(h1, h2) { font-size: var(--text-heading-md); }
+.prose :where(h3, h4, h5, h6) { font-size: var(--text-heading-sm); }
+.prose > :first-child { margin-top: 0; }
+.prose :where(p, ul, ol, pre, table, blockquote) { margin-block-end: 0; }
+.prose :where(ul, ol) { padding-left: var(--space-xl); }
+.prose li + li { margin-top: var(--space-xs); }
+.prose img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--action-radius);
+}
+.prose pre {
+    max-width: 100%;
+    overflow: auto;
+    padding: var(--space-md);
+    background: var(--content-highlight);
+}
+.prose code { font-size: var(--text-small); }
+.prose pre code { overflow-wrap: normal; white-space: pre; }
+.prose table {
+    display: block;
+    max-width: 100%;
+    overflow: auto;
+    border-collapse: collapse;
+}
+.prose :where(th, td) {
+    border: 1px solid var(--content-divider);
+    padding: var(--space-sm) var(--space-md);
+}
+.prose blockquote {
+    margin-inline: 0;
+    padding-left: var(--space-lg);
+    border-left: 3px solid var(--content-divider);
+}

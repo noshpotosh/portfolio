@@ -1,0 +1,42 @@
+/* Portfolio palette. Keep new colors tied to these roles. */
+:root {
+    color-scheme: light;
+    --color-cartridge-red: #ac3439;
+    --color-cartridge-gold: #ffce3e;
+    --color-cartridge-blue: #425b9e;
+    --color-mario-red: #df413e;
+    --color-shell: #7287c7;
+    --color-ink: #202b3c;
+    --color-paper: #f4f1eb;
+    --color-accent: #e9a36b;
+    --color-link: #465c99;
+    --color-muted: #596579;
+
+    /* Text and details on navy surfaces. */
+    --color-on-dark: var(--color-paper);
+    --color-muted-on-dark: color-mix(in srgb, var(--color-paper) 65%, var(--color-shell));
+    --color-divider-on-dark: color-mix(in srgb, var(--color-shell) 45%, transparent);
+
+    /* All shell lighting stays in the same blue family. */
+    --color-shell-light: color-mix(in srgb, var(--color-shell) 75%, var(--color-paper));
+    --color-shell-shade: color-mix(in srgb, var(--color-shell) 65%, var(--color-link));
+    --color-bevel-light: color-mix(in srgb, var(--color-shell) 30%, var(--color-paper));
+    --color-bevel-shadow: color-mix(in srgb, var(--color-shell) 35%, var(--color-ink));
+    --color-shadow: color-mix(in srgb, var(--color-ink) 85%, transparent);
+    --color-rail-highlight: color-mix(in srgb, var(--color-bevel-light) 44%, transparent);
+}
+
+/* Screen palette: paper reading surfaces, navy headings, muted red actions. */
+:root {
+    --content-screen: #96e2ef;
+    --content-heading: #243458;
+    --content-ink: #34383f;
+    --content-action: var(--color-cartridge-red);
+    --content-on-action: var(--color-paper);
+    --content-action-hover: #922c31;
+    --content-muted: #62666d;
+    --content-link: var(--color-link);
+    --content-yellow: var(--color-cartridge-gold);
+    --content-highlight: #fffbec;
+    --content-divider: #d2cfc8;
+}

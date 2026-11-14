@@ -1,0 +1,28 @@
+/* Zero-specificity defaults let component styles configure or replace layout. */
+:where(.stack) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stack-space, var(--space-md));
+}
+:where(.stack > *) { margin-block: 0; }
+
+:where(.cluster) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--cluster-space, var(--space-sm));
+}
+
+:where(.flow > *) { margin-block: 0; }
+:where(.flow > * + *) {
+    margin-block-start: var(--flow-space, var(--space-lg));
+}
+
+/* Columns wrap when their readable minimum no longer fits. */
+:where(.grid) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--grid-min, 18rem)), 1fr));
+    gap: var(--grid-space, var(--space-lg));
+    align-items: var(--grid-align, stretch);
+}
+
