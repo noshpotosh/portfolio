@@ -2,6 +2,12 @@
 
 Noah Stewart’s portfolio, built with HTML, CSS, JavaScript, and [CFJS](https://github.com/noshpotosh/cfjs) inside a handheld-console frame. Projects, case studies, and activity load from public GitHub data. No build step is required; `src/` is the complete website.
 
+## Live site
+
+Visit [noshpotosh.github.io/portfolio](https://noshpotosh.github.io/portfolio/).
+
+GitHub Actions tests each pull request and each push to `main` using the `/portfolio/` base path. After the tests pass on `main`, the Pages workflow publishes `src/` directly to GitHub Pages. The workflow can also be run manually from the Actions tab.
+
 ## Run locally
 
 Use Node.js 22.23.4 or newer. Starting the local server needs no dependency installation:
