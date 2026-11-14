@@ -9,19 +9,19 @@ async function verifyPortfolio() {
         await require('./section-order.cjs')(browser);
         
         const context = await browser.newContext();
-        
+        await require('./helpers/browser-fixtures.cjs').fixtures(context);
         const page = await context.newPage();
         const errors = [];
         page.on('pageerror', error => errors.push(error.message));
         await page.goto(base);
-        await page.locator('h1').waitFor();
+        await page.locator('h1').first().waitFor();
         await page.locator('.shell').waitFor();
         assert(await page.locator('.shellFinish__faceEdges polygon').first().getAttribute('points'));
         await page.locator('.profileHeader__name').waitFor();
         assert.equal(await page.locator('#view-home').getAttribute('aria-current'), 'page');
         for (const width of [1440, 390]) {
             await page.setViewportSize({ width, height: 1000 });
-            assert(await page.locator('h1').first().isVisible());
+            assert(await page.locator('h1:visible').first().isVisible());
         }
         assert.deepEqual(errors, []);
         await context.close();

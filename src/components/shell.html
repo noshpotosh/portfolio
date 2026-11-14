@@ -47,6 +47,310 @@
     }
 </script>
 
+<script id="github">
+    const githubUser = "noshpotosh";
+    const GITHUB_API_BASE = "https://api.github.com";
+    const GITHUB_RAW_BASE = "https://raw.githubusercontent.com";
+    const GITHUB_ACCEPT_HEADER = "application/vnd.github+json";
+    const REPOSITORY_TIMEOUT_MS = 10000;
+    const REPOSITORY_PAGE_SIZE = 100;
+    const REPOSITORY_CACHE_LIFETIME_MS = 60 * 60 * 1000;
+    const REPOSITORY_CACHE_KEY = `portfolio-repositories:${githubUser}:v1`;
+    const FEATURED_TOPIC = "portfolio-featured";
+    const WORK_TOPIC = "portfolio-work";
+    const PLAY_TOPIC = "portfolio-play";
+    const WORK_CATEGORY = "work";
+    const PLAY_CATEGORY = "play";
+    const CASE_STUDY_FILENAME = "CASE_STUDY.md";
+    const PROJECT_ICON_FILENAME = "project-icon.png";
+    const PROJECT_PREVIEW_FILENAME = "project-preview.png";
+    const PROJECT_PREVIEW_GIF_FILENAME = "project-preview.gif";
+    const PROJECT_ROUTE_PREFIX = "#projects/";
+    const WEB_PROTOCOLS = ["http:", "https:"];
+    const portfolioTopics = [
+        FEATURED_TOPIC,
+        WORK_TOPIC,
+        PLAY_TOPIC,
+        "portfolio-resume",
+    ];
+
+    let repositoriesPromise;
+    const caseStudyChecks = new Map();
+    const projectImageChecks = new Map();
+
+    /**
+     * Load project cards grouped by their portfolio category.
+     * @returns {Promise<{work: Object[], play: Object[]}>}
+     */
+    async function loadPortfolioProjects() {
+        const cards = await portfolioCards();
+
+        return {
+            work: cards.filter(
+                (repository) => repositoryCategory(repository) === WORK_CATEGORY,
+            ),
+            play: cards.filter(
+                (repository) => repositoryCategory(repository) === PLAY_CATEGORY,
+            ),
+        };
+    }
+
+    /**
+     * Load the first featured project for the home page.
+     * @returns {Promise<Object[]>}
+     */
+    async function loadFeaturedProjects() {
+        const repository = (await portfolioCards()).find((repository) =>
+            repository.topics?.includes(FEATURED_TOPIC),
+        );
+
+        return repository
+            ? [
+                  {
+                      ...repository,
+                      headingId: "home-featured-title",
+                      label: "View case study",
+                  },
+              ]
+            : [];
+    }
+
+    /**
+     * Build card data while sharing repository and asset requests.
+     * @returns {Promise<Object[]>}
+     */
+    async function portfolioCards() {
+        return Promise.all(
+            (await fetchPortfolioRepositories()).map(async (repository) => {
+                const [hasCaseStudy, previewURL, iconURL] = await Promise.all([
+                    repositoryHasCaseStudy(repository),
+                    repositoryPreviewURL(repository),
+                    repositoryImageURL(repository, PROJECT_ICON_FILENAME),
+                ]);
+
+                return {
+                    ...repository,
+                    hasCaseStudy,
+                    previewURL,
+                    iconURL,
+                    previewAlt: `${repository.name} project screenshot`,
+                    technologies: repositoryTechnologies(repository),
+                    liveURL: repositoryLiveURL(repository.homepage),
+                    liveLabel: `View ${repository.name} live website (opens in a new tab)`,
+                    studyURL: `${PROJECT_ROUTE_PREFIX}${encodeURIComponent(repository.name)}`,
+                    repositoryLabel: `View ${repository.name} repository (opens in a new tab)`,
+                    label:
+                        repositoryCategory(repository) === PLAY_CATEGORY
+                            ? "Project notes"
+                            : "View case study",
+                    headingId: "",
+                };
+            }),
+        );
+    }
+
+    /**
+     * Share one repository request across the current page.
+     * @returns {Promise<Object[]>}
+     */
+    function fetchPortfolioRepositories() {
+        repositoriesPromise ??= fetchRepositories();
+
+        return repositoriesPromise;
+    }
+
+    /**
+     * Select a portfolio category; play takes priority over work.
+     * @param {Object} repository
+     * @returns {"work"|"play"|null}
+     */
+    function repositoryCategory(repository) {
+        if (repository.topics?.includes(PLAY_TOPIC)) return PLAY_CATEGORY;
+        if (
+            repository.topics?.some((topic) =>
+                [FEATURED_TOPIC, WORK_TOPIC].includes(topic),
+            )
+        )
+            return WORK_CATEGORY;
+
+        return null;
+    }
+
+    /**
+     * Format non-portfolio topics, falling back to the repository language.
+     * @param {Object} repository
+     * @returns {string}
+     */
+    function repositoryTechnologies(repository) {
+        return (
+            repository.topics
+                ?.filter((topic) => !portfolioTopics.includes(topic))
+                .join(" · ") ||
+            repository.language ||
+            ""
+        );
+    }
+
+    /**
+     * Validate an absolute HTTP(S) homepage URL.
+     * @param {unknown} homepage
+     * @returns {string}
+     */
+    function repositoryLiveURL(homepage) {
+        if (typeof homepage !== "string" || !homepage.trim()) return "";
+
+        try {
+            const url = new URL(homepage.trim());
+            return WEB_PROTOCOLS.includes(url.protocol) ? url.href : "";
+        } catch {
+            return "";
+        }
+    }
+
+    /**
+     * Cache case-study availability; failed checks count as unavailable.
+     * @param {Object} repository
+     * @returns {boolean|Promise<boolean>}
+     */
+    function repositoryHasCaseStudy(repository) {
+        if (!repositoryCategory(repository)) return false;
+        if (!caseStudyChecks.has(repository.name)) {
+            caseStudyChecks.set(
+                repository.name,
+                (async () => {
+                    try {
+                        const response = await fetch(
+                            `${GITHUB_RAW_BASE}/${githubUser}/${encodeURIComponent(repository.name)}/${encodeURIComponent(repository.default_branch)}/${CASE_STUDY_FILENAME}`,
+                            {
+                                method: "HEAD",
+                                signal: AbortSignal.timeout(
+                                    REPOSITORY_TIMEOUT_MS,
+                                ),
+                            },
+                        );
+                        return response.ok;
+                    } catch {
+                        return false;
+                    }
+                })(),
+            );
+        }
+
+        return caseStudyChecks.get(repository.name);
+    }
+
+    /**
+     * Cache conventional image checks without using the GitHub API.
+     * @param {Object} repository
+     * @param {string} filename
+     * @returns {string|Promise<string>}
+     */
+    function repositoryImageURL(repository, filename) {
+        if (!repositoryCategory(repository)) return "";
+
+        const url = `${GITHUB_RAW_BASE}/${githubUser}/${encodeURIComponent(repository.name)}/${encodeURIComponent(repository.default_branch)}/.github/${filename}`;
+        if (!projectImageChecks.has(url)) {
+            projectImageChecks.set(
+                url,
+                (async () => {
+                    try {
+                        const response = await fetch(url, {
+                            method: "HEAD",
+                            signal: AbortSignal.timeout(REPOSITORY_TIMEOUT_MS),
+                        });
+                        return response.ok ? url : "";
+                    } catch {
+                        return "";
+                    }
+                })(),
+            );
+        }
+
+        return projectImageChecks.get(url);
+    }
+
+    /**
+     * Prefer a PNG preview, falling back to GIF.
+     * @param {Object} repository
+     * @returns {Promise<string>}
+     */
+    async function repositoryPreviewURL(repository) {
+        return (
+            (await repositoryImageURL(repository, PROJECT_PREVIEW_FILENAME)) ||
+            (await repositoryImageURL(repository, PROJECT_PREVIEW_GIF_FILENAME))
+        );
+    }
+
+    /**
+     * Use fresh cached repositories, or stale data if a refresh fails.
+     * @returns {Promise<Object[]>}
+     */
+    async function fetchRepositories() {
+        let cachedRepositories;
+
+        try {
+            const storedCache = JSON.parse(
+                localStorage.getItem(REPOSITORY_CACHE_KEY),
+            );
+            if (
+                Array.isArray(storedCache?.repositories) &&
+                Number.isFinite(storedCache.savedAt)
+            )
+                cachedRepositories = storedCache;
+        } catch {
+            // Storage can be disabled or contain an invalid older value.
+        }
+
+        if (
+            cachedRepositories &&
+            Date.now() - cachedRepositories.savedAt < REPOSITORY_CACHE_LIFETIME_MS
+        )
+            return cachedRepositories.repositories;
+
+        try {
+            const repositories = await fetchRepositoryPages();
+            try {
+                localStorage.setItem(
+                    REPOSITORY_CACHE_KEY,
+                    JSON.stringify({ savedAt: Date.now(), repositories }),
+                );
+            } catch {
+                // A successful response remains usable without browser storage.
+            }
+            return repositories;
+        } catch (error) {
+            if (cachedRepositories) return cachedRepositories.repositories;
+            throw error;
+        }
+    }
+
+    /**
+     * Fetch every repository page; reject if any request fails.
+     * @returns {Promise<Object[]>}
+     */
+    async function fetchRepositoryPages() {
+        const repositories = [];
+
+        for (let page = 1; ; page++) {
+            const response = await fetch(
+                `${GITHUB_API_BASE}/users/${githubUser}/repos?sort=pushed&per_page=${REPOSITORY_PAGE_SIZE}&page=${page}`,
+                {
+                    headers: { Accept: GITHUB_ACCEPT_HEADER },
+                    signal: AbortSignal.timeout(REPOSITORY_TIMEOUT_MS),
+                },
+            );
+            if (!response.ok)
+                throw new Error(`GitHub responded ${response.status}`);
+
+            const repositoryPage = await response.json();
+            repositories.push(...repositoryPage);
+
+            if (repositoryPage.length < REPOSITORY_PAGE_SIZE)
+                return repositories;
+        }
+    }
+</script>
+
 <style>
     /* Console sizing, outline geometry, and the recessed screen frame. */
     /* Tune shell dimensions here; the SVG finish reads these same shape controls. */
