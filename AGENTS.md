@@ -1,5 +1,13 @@
 A main goal of all agent work in this repository is to write simple, semantic code that is easy to understand and tweak. Use meaningful names, clear structure, and straightforward implementations; avoid unnecessary complexity and abstractions.
 
+## Branch workflow
+
+- Create feature branches from the latest `develop` and raise PRs into `develop`. Do not commit or push directly to `main` or `develop`.
+- Require the `Verify portfolio` check to pass and resolve review conversations before merging. Do not bypass branch protection or disable checks to merge.
+- Squash-merge feature PRs into `develop`. Release with a `develop` → `main` PR and squash merge; only `main` deploys GitHub Pages.
+- After a release, create a temporary sync branch from the latest `develop`, merge `origin/main` into it, and raise a PR into `develop`. Merge that sync PR with a merge commit, preserving ancestry; do not squash or rebase the sync. Complete this before starting the next feature batch.
+- Keep `main`, `develop`, and recovery stashes. Delete temporary branches only after verifying their work is included in a merged PR and they have no later unmerged commits.
+
 ## Code readability
 
 - Use blank lines to separate logical chunks of code, keeping closely related statements together.

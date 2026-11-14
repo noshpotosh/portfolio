@@ -6,7 +6,16 @@ Noah Stewart’s portfolio, built with HTML, CSS, JavaScript, and [CFJS](https:/
 
 Visit [noshpotosh.github.io/portfolio](https://noshpotosh.github.io/portfolio/).
 
-GitHub Actions tests each pull request and each push to `main` using the `/portfolio/` base path. After the tests pass on `main`, the Pages workflow publishes `src/` directly to GitHub Pages. The workflow can also be run manually from the Actions tab.
+GitHub Actions tests pull requests targeting `develop` or `main`, and pushes to either branch, using the `/portfolio/` base path. After the tests pass on `main`, the Pages workflow publishes `src/` directly to GitHub Pages. The workflow can also be run manually from the Actions tab. Runs on `develop` test the site without publishing it.
+
+## Branch workflow
+
+1. Create a feature branch from the latest `develop`, and open a PR into `develop`. Squash-merge it after `Verify portfolio` passes and review conversations are resolved.
+2. Test the integrated changes on `develop` with `npm run dev` and `BASE_PATH=/portfolio/ npm run test:all`. GitHub Actions also runs the full suite after each merge. There is no separate hosted staging site.
+3. When ready to release, open a `develop` → `main` PR. Squash-merge it after the required checks pass; the successful `main` workflow deploys the live site.
+4. Before the next batch of features, create a temporary sync branch from the latest `develop`, merge `origin/main` into it, and open a PR back into `develop`. Use **Create a merge commit** for this sync PR so both branches share the release history. This avoids repeated release diffs after squash merges. Resolve any conflicts on the sync branch and rerun checks.
+
+Both long-lived branches require PRs, passing `Verify portfolio` checks on an up-to-date branch, and resolved review conversations, including for administrators. Direct pushes, force-pushes, and deletion are blocked. An independent reviewer approval is optional, allowing a solo maintainer to merge their own PRs. `main` requires linear history; `develop` permits merge commits for release synchronization. Merged temporary branches are deleted automatically; keep `main` and `develop`.
 
 ## Run locally
 
