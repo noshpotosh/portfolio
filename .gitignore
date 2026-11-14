@@ -1,0 +1,7 @@
+node_modules/
+/archive/
+/dist/
+/output/
+/.vscode/
+/.idea/
+.DS_Store
