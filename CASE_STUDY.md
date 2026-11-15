@@ -15,7 +15,7 @@ The funny part: even with AI, this "simple" site took me about as long as it wou
 I'll be upfront. If I'd hand-written every line, or hand-refactored the whole thing, the *code* would be cleaner. I believe that. But that comparison misses what AI actually changed, which is how much I could try before committing to anything:
 
 - **20+ mockups before a single line of HTML or CSS.** I generated whole-page concepts in minutes and used them to figure out what I actually wanted.
-- **A one-off design tool, just for the shell.** Before building the real site, I had AI make a small standalone page with controls for adjusting the shape of the console "shell." I tweaked sliders until the silhouette felt right, and only then moved on to the content. By hand, that tool would've taken days. It's so specific and throwaway that I never would have built it. I'd have just nudged numbers in the CSS until it looked okay.
+- **A one-off design tool, just for the shell.** Before building the real site, I had AI make a small standalone page with controls for adjusting the shape of the console "shell." I tweaked sliders until the silhouette felt right, and only then moved on to the content. By hand, that tool would've taken a day. It's so specific and throwaway that I never would have built it. I'd have just nudged numbers in the CSS until it looked okay.
 - **Room for weird ideas.** A playable brick-breaker on the home page? A cartridge carousel for navigation? I built them, looked at them, and threw them out. Cheap experiments make it easy to say no.
 
 Those things are force multipliers. Pre-AI, I don't think I'd have landed on something I like this much, at least from a product perspective.
