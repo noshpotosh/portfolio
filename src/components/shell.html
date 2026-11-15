@@ -47,6 +47,12 @@
     }
 </script>
 
+<!--
+    Keep these shared helpers in synchronous classic scripts. CFJS expands nested
+    includes, then activates fragment scripts: classic scripts run during activation,
+    before deferred module consumers run and before CFJS looks up data providers in
+    a microtask, so their globals are ready for both.
+-->
 <script id="github">
     const githubUser = "noshpotosh";
     const GITHUB_API_BASE = "https://api.github.com";
