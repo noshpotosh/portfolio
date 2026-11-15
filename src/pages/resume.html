@@ -11,15 +11,13 @@
                 class="resumePage__identity resumePage__printOnly"
                 aria-labelledby="resume-name"
             >
-                <div class="resumePage__nameRow">
-                    <h2 id="resume-name" cf-text="resume.name"></h2>
-                    <p class="resumePage__location" cf-text="resume.location"></p>
-                </div>
+                <h2 id="resume-name" cf-text="resume.name"></h2>
                 <ul
                     class="resumePage__contacts"
                     id="resume-contact"
                     aria-label="Resume contact details"
                 >
+                    <li cf-text="resume.location"></li>
                     <cf-loop items="resume.contacts" as="contact">
                         <template>
                             <li>
@@ -264,12 +262,6 @@
             bold: true,
             spacingAfter: layout.nameSpacing,
         });
-        pdf.setFont(layout.fontFamily, layout.regularFontStyle);
-        pdf.setFontSize(layout.metadataFontSize);
-        pdf.text(normalizeResumePdfText(resume.location),
-            layout.pageWidth - layout.margin,
-            layout.margin + layout.nameFontSize,
-            { align: "right" });
         drawContacts();
         drawEntries("Experience", resume.experience);
         drawEntries("Selected Project", resume.projects);
@@ -326,7 +318,7 @@
             pdf.setFontSize(layout.contactFontSize);
             let cursorX = layout.margin;
 
-            for (const contact of resume.contacts) {
+            for (const contact of [{ label: resume.location }, ...resume.contacts]) {
                 const contactLabel = normalizeResumePdfText(contact.label);
                 const contactWidth = pdf.getTextWidth(contactLabel);
 
@@ -578,18 +570,6 @@
             font-size: 22pt;
             line-height: 1.2;
             margin: 0;
-        }
-
-        #resume-view .resumePage__nameRow {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            gap: 12pt;
-        }
-
-        #resume-view .resumePage__location {
-            margin: 0;
-            font-size: 9.5pt;
         }
 
         #resume-view .resumePage__contacts {
