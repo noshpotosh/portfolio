@@ -1,6 +1,6 @@
 ## The short version
 
-This is my portfolio, and the site you're probably reading this on. I wanted a home base I actually love: one place to see my most complete projects, styled like a handheld console I'd have been obsessed with as a kid. Most of the content that changes often, like projects, case studies, and recent activity, loads straight from my GitHub. When I push a project, it shows up here without me touching the site. It's built with [CFJS](https://github.com/noshpotosh/cfjs), the tiny HTML composition library I've been developing alongside it.
+This is my portfolio, and the site you're probably reading this on. I wanted a home base I actually love for my projects. My hope is that having a place I'm excited to share them will motivate me to push through the hardest part of software development: the last 20%. Most of the content that changes often, like projects, case studies, and recent activity, loads straight from my GitHub. When I push a project, it shows up here without me touching the site. It's built with [CFJS](https://github.com/noshpotosh/cfjs), the tiny HTML composition library I've been developing alongside it.
 
 ## Why I built it
 
