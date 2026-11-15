@@ -89,6 +89,11 @@
         --flow-space: var(--space-xs);
     }
 
+    .homeIntro__description strong {
+        display: inline-block;
+        max-width: 100%;
+    }
+
     .homeIntro__actions {
         --cluster-space: var(--space-xs)
             clamp(var(--space-md), 2vw, var(--space-lg));
@@ -105,12 +110,13 @@
     .homeInterests {
         --flow-space: var(--space-sm);
         border-top: var(--section-divider);
-        padding-top: var(--space-lg);
+        padding-top: var(--space-sm);
     }
+
     @container (min-width: 38rem) {
         .home-overview {
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            row-gap: var(--space-lg);
+            row-gap: var(--space-sm);
         }
 
         .home-overview > .featuredProject {
