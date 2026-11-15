@@ -1,23 +1,23 @@
 {
   "name": "Noah Stewart",
   "title": "Software engineer",
-  "location": "Chicago, Illinois",
+  "location": "Chicago, IL",
   "contacts": [
     {
       "label": "stewartnoahj@gmail.com",
       "href": "mailto:stewartnoahj@gmail.com"
     },
     {
-      "label": "noshpotosh.github.io/site",
-      "href": "https://noshpotosh.github.io/site/"
+      "label": "noshpotosh.github.io/portfolio",
+      "href": "https://noshpotosh.github.io/portfolio/"
     },
     {
       "label": "github.com/noshpotosh",
       "href": "https://github.com/noshpotosh"
     },
     {
-      "label": "linkedin.com/in/noah-stewart-dev",
-      "href": "https://www.linkedin.com/in/noah-stewart-dev/"
+      "label": "linkedin.com/in/noshpotosh",
+      "href": "https://www.linkedin.com/in/noshpotosh/"
     }
   ],
   "experience": [
