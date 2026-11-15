@@ -7,12 +7,24 @@
                 I build the tools and APIs that help other teams move faster.
             </h2>
             <p class="homeIntro__description">
-                I'm a software engineer at Commodity &amp; Ingredient Hedging.
-                I designed the internal REST API framework our engineers build
-                on, which now runs 100+ endpoints. I also led the move to React
-                and TypeScript inside a legacy CFML platform, which included
-                building a shared library of 50+ components.
+                I'm a software engineer at Commodity &amp; Ingredient Hedging,
+                where I build internal platforms and modernize the tools our
+                engineers use.
             </p>
+            <ul class="homeIntro__achievements stack" aria-label="Achievements">
+                <li>
+                    Designed the REST API framework behind
+                    <strong>100+ endpoints</strong>.
+                </li>
+                <li>
+                    Led the move to React and TypeScript, building
+                    <strong>50+ shared components</strong>.
+                </li>
+                <li>
+                    Automated closing-document workflows at Veterans United,
+                    saving <strong>17,000 hours annually</strong>.
+                </li>
+            </ul>
             <p class="homeIntro__education">
                 B.S. Computer Science, UW–Madison, 2022.
             </p>
@@ -37,20 +49,6 @@
                         target="_blank"
                         rel="noopener noreferrer"
                         >LinkedIn <span aria-hidden="true">↗</span></a>
-                </li>
-            </ul>
-            <ul class="homeIntro__achievements stack" aria-label="Achievements">
-                <li>
-                    Designed a REST API framework powering
-                    <strong>100+ endpoints</strong>.
-                </li>
-                <li>
-                    Built <strong>50+ shared React components</strong> for
-                    15 product pages and widgets.
-                </li>
-                <li>
-                    Automated closing-document workflows, saving
-                    <strong>17,000 hours annually</strong>.
                 </li>
             </ul>
         </section>
@@ -123,6 +121,10 @@
         --flow-space: var(--space-xs);
     }
 
+    .homeIntro__education {
+        color: var(--content-muted);
+    }
+
     .homeIntro__actions {
         --cluster-space: var(--space-xs)
             clamp(var(--space-md), 2vw, var(--space-lg));
@@ -138,7 +140,9 @@
 
     .homeIntro__achievements {
         --stack-space: var(--space-xs);
+        margin-left: var(--space-xs);
         padding-left: var(--space-lg);
+        border-left: 2px solid var(--content-divider);
         list-style: disc;
     }
 
