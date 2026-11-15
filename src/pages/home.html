@@ -7,19 +7,14 @@
                 I build the tools and APIs that help other teams move faster.
             </h2>
             <p class="homeIntro__description">
-                At Commodity &amp; Ingredient Hedging, I designed the internal
-                API framework our engineers build on and led the move to React
-                and TypeScript inside a legacy CFML platform.
+                I'm a software engineer at Commodity &amp; Ingredient Hedging.
+                I designed the internal <strong>REST API framework</strong> our
+                engineers build on, which now runs <strong>100+ endpoints</strong>.
+                I also led the move to <strong>React and TypeScript</strong>
+                inside a legacy CFML platform, which included building a shared
+                library of <strong>50+ components</strong>.
             </p>
-            <p class="homeIntro__description">
-                Before that, I automated closing-document workflows at Veterans
-                United Home Loans, saving about 17,000 hours of manual work a
-                year, and built a tool at Sentry Insurance that let business
-                users ship pricing changes without filing developer tickets.
-            </p>
-            <p class="homeIntro__education">
-                B.S. Computer Science, UW–Madison, 2022.
-            </p>
+
             <ul class="homeIntro__actions cluster">
                 <li>
                     <a
@@ -46,71 +41,23 @@
         </section>
 
         <cf-include src="./components/featured-project.html"></cf-include>
+
+        <section
+            class="homeInterests flow"
+            aria-labelledby="home-interests-heading"
+        >
+            <h2 id="home-interests-heading" class="section-heading">
+                Outside of work
+            </h2>
+            <p>
+                A lot of what I build starts with things I enjoy. This site,
+                for one, is a nod to the 2000s web I grew up on. I build
+                split ortholinear keyboards to make typing all day more
+                comfortable, and make jewelry from found and recycled
+                metal using basic hand tools.
+            </p>
+        </section>
     </div>
-
-    <section
-        class="homeAchievements stack"
-        aria-labelledby="home-achievements-heading"
-    >
-        <h2 id="home-achievements-heading" class="section-heading">
-            Achievements
-        </h2>
-        <ul class="stack">
-            <li>
-                Designed an internal REST API framework behind
-                <strong>100+ endpoints</strong>, standardizing authentication,
-                validation, and error handling, and onboarded other engineers to
-                build on it.
-            </li>
-            <li>
-                Introduced React and TypeScript into a legacy CFML platform,
-                with a shared library of <strong>50+ components</strong>
-                supporting 15 product pages and widgets.
-            </li>
-            <li>
-                Built PDF parsing, signed-field validation, and document-routing
-                workflows for a closing-document automation system that saved
-                <strong>17,000 hours</strong> of manual work annually
-            </li>
-        </ul>
-    </section>
-
-    <section
-        class="homeInterests flow"
-        aria-labelledby="home-interests-heading"
-    >
-        <h2 id="home-interests-heading" class="section-heading">
-            Outside of work
-        </h2>
-        <p class="homeInterests__intro">
-            A lot of what I build starts with things I enjoy. This site, for
-            one, is a nod to the 2000s web I grew up on.
-        </p>
-        <ul class="homeInterests__list grid">
-            <li class="flow">
-                <h3>Keyboards &amp; metal</h3>
-                <p>
-                    I type all day, so I build split ortholinear keyboards to
-                    make that more comfortable. I also make jewelry from found
-                    and recycled metal using basic hand tools.
-                </p>
-            </li>
-            <li class="flow">
-                <h3>Games</h3>
-                <p>
-                    Usually something I can sink hours into, like Dark Souls,
-                    Monster Hunter, or GTA 6.
-                </p>
-            </li>
-            <li class="flow">
-                <h3>Outdoors</h3>
-                <p>
-                    When it’s nice out, I’m reading in a hammock. Plenty of
-                    evenings end around a bonfire.
-                </p>
-            </li>
-        </ul>
-    </section>
 </div>
 
 <style>
@@ -118,11 +65,13 @@
     #home-view {
         --stack-space: var(--content-spacing);
         min-height: 100%;
+        container-type: inline-size;
     }
 
     .home-overview {
         --grid-space: var(--content-spacing);
         --grid-align: start;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .homeIntro {
@@ -140,6 +89,11 @@
         --flow-space: var(--space-xs);
     }
 
+    .homeIntro__description strong {
+        display: inline-block;
+        max-width: 100%;
+    }
+
     .homeIntro__actions {
         --cluster-space: var(--space-xs)
             clamp(var(--space-md), 2vw, var(--space-lg));
@@ -153,49 +107,27 @@
         padding-block: var(--space-sm);
     }
 
-    :is(.homeAchievements, .homeInterests) {
-        border-top: var(--section-divider);
-        padding-top: var(--space-lg);
-    }
-
-    .homeAchievements {
-        --stack-space: var(--space-md);
-    }
-
-    .homeAchievements ul {
-        --stack-space: var(--space-sm);
-        padding-left: var(--space-lg);
-        list-style: disc;
-    }
-
-    .homeAchievements li::marker {
-        color: var(--content-muted);
-        font-size: 0.75em;
-    }
-
     .homeInterests {
         --flow-space: var(--space-sm);
+        border-top: var(--section-divider);
+        padding-top: var(--space-sm);
     }
 
-    .homeInterests__intro {
-        max-width: 60ch;
-    }
+    @container (min-width: 38rem) {
+        .home-overview {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            /* Keep a tall featured card from stretching the space below the intro. */
+            grid-template-rows: min-content 1fr;
+            row-gap: var(--space-sm);
+        }
 
-    .homeInterests__list {
-        --flow-space: var(--space-lg);
-        --grid-min: 14rem;
-        padding: 0;
-        list-style: none;
-    }
+        .home-overview > .featuredProject {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+        }
 
-    .homeInterests__list li {
-        --flow-space: var(--space-xs);
-        padding-left: var(--space-md);
-        border-left: 2px solid var(--content-divider);
-    }
-
-    .homeInterests__list h3 {
-        font-size: var(--text-body);
-        font-weight: 600;
+        .homeInterests {
+            grid-column: 1;
+        }
     }
 </style>
