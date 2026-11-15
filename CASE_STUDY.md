@@ -53,6 +53,13 @@ Where it landed:
 
 ![The current home page](.github/case-study/09-current.jpg)
 
+## Further watching
+
+Two Kevin Powell videos cover CSS concepts used in this site:
+
+- **[Learn how to use Media queries & Container queries](https://www.youtube.com/watch?v=2rlWBZ17Wes).** The home layout, project cards, and résumé use container queries to adapt to the space available inside the console shell. For example, the home layout switches to two columns when its container reaches 38rem.
+- **[No more clamp() magic numbers](https://www.youtube.com/watch?v=bLB90QwRki4).** The site's content uses shared typography and spacing scales built with `clamp()`, combining `rem` and viewport units to grow smoothly between minimum and maximum sizes. This video offers a related look at making fluid sizing calculations easier to understand.
+
 ## What's next
 
 - **Clean up the CSS.** I'm working through the Complete CSS course, and it's full of ideas I want to bring back into this site.
