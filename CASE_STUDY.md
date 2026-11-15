@@ -1,12 +1,10 @@
 ## The short version
 
-This is my portfolio, and the site you're probably reading this on. I wanted a home base I actually love for my projects. My hope is that having a place I'm excited to share them will motivate me to push through the hardest part of software development: the last 20%. Most of the content that changes often, like projects, case studies, and recent activity, loads straight from my GitHub. When I push a project, it shows up here without me touching the site. It's built with [CFJS](https://github.com/noshpotosh/cfjs), the tiny HTML composition library I've been developing alongside it.
+This is my portfolio, and the site you're probably reading this on. My hope is that having a place I'm excited to share them will motivate me to push through the hardest part of software development: the last 20%. Most of the content that changes often, like projects, case studies, and recent activity, loads straight from my GitHub. When I push a project, it shows up here without me touching the site.
 
 ## Why I built it
 
-I didn't want a portfolio I'd build once and forget. I wanted a site I'd be excited to put projects on, one that feels like *mine* and not a template with my name swapped in.
-
-Pulling content from GitHub turned out to be the best decision I made. Each project's description, icon, and this exact case study live in that project's own repo. The site just goes and gets them. Honestly, that's become a motivator in its own right. Knowing a finished project will show up here on its own makes me want to keep shipping.
+I didn't want a portfolio I'd build once and forget, like something that was just a template with my name swapped in. I wanted a site I'd be excited to put projects on, one that feels like *mine*. One I could evolve and grow wherever my whims take me... I also needed a reason to finally finish the first stable version of [CFJS](https://github.com/noshpotosh/cfjs), the tiny HTML composition library I've been toying around with.
 
 ## Iterating with AI
 
