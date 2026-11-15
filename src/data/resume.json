@@ -30,7 +30,6 @@
       "bullets": [
         "Designed an internal REST API framework behind 100+ endpoints across 26 modules, standardizing authentication, authorization, validation, and error handling, and onboarded engineers to contribute.",
         "Proposed and led React and TypeScript adoption in a legacy CFML platform; co-developed Vite tooling and a shared library of 50+ components supporting 15 product pages and widgets.",
-        "Built an AI-assisted triage workspace integrating Jira, Sentry, and Bitbucket that uses Git history to route each bug to the engineers who know that code best.",
         "Migrated 11K+ live and 330K+ historical cash-bid records to a normalized schema with versioned APIs, preserving contract, web, and mobile workflows with transactional tooling and a compatibility adapter."
       ]
     },
