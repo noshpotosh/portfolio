@@ -116,6 +116,8 @@
     @container (min-width: 38rem) {
         .home-overview {
             grid-template-columns: repeat(2, minmax(0, 1fr));
+            /* Keep a tall featured card from stretching the space below the intro. */
+            grid-template-rows: min-content 1fr;
             row-gap: var(--space-sm);
         }
 

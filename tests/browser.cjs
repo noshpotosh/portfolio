@@ -9,6 +9,7 @@ const { fixtures } = require('./helpers/browser-fixtures.cjs');
     const browser = await chromium.launch({ headless:true });
     try {
         await require('./section-order.cjs')(browser);
+        await require('./home-layout.cjs')(browser, base, fixtures);
         await require('./case-study-layout.cjs')(browser, base, fixtures);
         await require('./activity.cjs')(browser, base, fixtures);
         await require('./previews.cjs')(browser, base, fixtures);
