@@ -39,37 +39,24 @@
                         >LinkedIn <span aria-hidden="true">↗</span></a>
                 </li>
             </ul>
+            <ul class="homeIntro__achievements stack" aria-label="Achievements">
+                <li>
+                    Designed a REST API framework powering
+                    <strong>100+ endpoints</strong>.
+                </li>
+                <li>
+                    Built <strong>50+ shared React components</strong> for
+                    15 product pages and widgets.
+                </li>
+                <li>
+                    Automated closing-document workflows, saving
+                    <strong>17,000 hours annually</strong>.
+                </li>
+            </ul>
         </section>
 
         <cf-include src="./components/featured-project.html"></cf-include>
     </div>
-
-    <section
-        class="homeAchievements stack"
-        aria-labelledby="home-achievements-heading"
-    >
-        <h2 id="home-achievements-heading" class="section-heading">
-            Achievements
-        </h2>
-        <ul class="stack">
-            <li>
-                Designed an internal REST API framework behind
-                <strong>100+ endpoints</strong>, standardizing authentication,
-                validation, and error handling, and onboarded other engineers to
-                build on it.
-            </li>
-            <li>
-                Introduced React and TypeScript into a legacy CFML platform,
-                with a shared library of <strong>50+ components</strong>
-                supporting 15 product pages and widgets.
-            </li>
-            <li>
-                Built PDF parsing, signed-field validation, and document-routing
-                workflows for a closing-document automation system that saved
-                <strong>17,000 hours</strong> of manual work annually
-            </li>
-        </ul>
-    </section>
 
     <section
         class="homeInterests flow"
@@ -149,28 +136,21 @@
         padding-block: var(--space-sm);
     }
 
-    :is(.homeAchievements, .homeInterests) {
-        border-top: var(--section-divider);
-        padding-top: var(--space-lg);
-    }
-
-    .homeAchievements {
-        --stack-space: var(--space-md);
-    }
-
-    .homeAchievements ul {
-        --stack-space: var(--space-sm);
+    .homeIntro__achievements {
+        --stack-space: var(--space-xs);
         padding-left: var(--space-lg);
         list-style: disc;
     }
 
-    .homeAchievements li::marker {
+    .homeIntro__achievements li::marker {
         color: var(--content-muted);
         font-size: 0.75em;
     }
 
     .homeInterests {
         --flow-space: var(--space-sm);
+        border-top: var(--section-divider);
+        padding-top: var(--space-lg);
     }
 
     .homeInterests__intro {
