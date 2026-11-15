@@ -7,27 +7,32 @@
                 I build the tools and APIs that help other teams move faster.
             </h2>
             <p class="homeIntro__description">
-                I'm a software engineer at Commodity &amp; Ingredient Hedging,
-                where I build internal platforms and modernize the tools our
-                engineers use.
+                I'm a software engineer at Commodity &amp; Ingredient Hedging.
+                I designed the internal REST API framework our engineers build
+                on, which now runs 100+ endpoints. I also led the move to React
+                and TypeScript inside a legacy CFML platform, which included
+                building a shared library of 50+ components.
             </p>
-            <ul class="homeIntro__achievements stack" aria-label="Achievements">
-                <li>
-                    Designed the REST API framework behind
-                    <strong>100+ endpoints</strong>.
-                </li>
-                <li>
-                    Led the move to React and TypeScript, building
-                    <strong>50+ shared components</strong>.
-                </li>
-                <li>
-                    Automated closing-document workflows at Veterans United,
-                    saving <strong>17,000 hours annually</strong>.
-                </li>
-            </ul>
-            <p class="homeIntro__education">
-                B.S. Computer Science, UW–Madison, 2022.
-            </p>
+
+            <section class="homeInterests flow" aria-labelledby="home-interests-heading">
+                <h2 id="home-interests-heading" class="section-heading">
+                    Outside of work
+                </h2>
+                <p>
+                    A lot of what I build starts with things I enjoy. This site,
+                    for one, is a nod to the 2000s web I grew up on. I build
+                    split ortholinear keyboards to make typing all day more
+                    comfortable, and make jewelry from found and recycled
+                    metal using basic hand tools.
+                </p>
+                <p>
+                    When I'm playing games, it's usually something I can sink
+                    hours into, like Dark Souls, Monster Hunter, or GTA 6.
+                    When it’s nice out, I’m reading in a hammock. Plenty of
+                    evenings end around a bonfire.
+                </p>
+            </section>
+
             <ul class="homeIntro__actions cluster">
                 <li>
                     <a
@@ -56,42 +61,6 @@
         <cf-include src="./components/featured-project.html"></cf-include>
     </div>
 
-    <section
-        class="homeInterests flow"
-        aria-labelledby="home-interests-heading"
-    >
-        <h2 id="home-interests-heading" class="section-heading">
-            Outside of work
-        </h2>
-        <p class="homeInterests__intro">
-            A lot of what I build starts with things I enjoy. This site, for
-            one, is a nod to the 2000s web I grew up on.
-        </p>
-        <ul class="homeInterests__list grid">
-            <li class="flow">
-                <h3>Keyboards &amp; metal</h3>
-                <p>
-                    I type all day, so I build split ortholinear keyboards to
-                    make that more comfortable. I also make jewelry from found
-                    and recycled metal using basic hand tools.
-                </p>
-            </li>
-            <li class="flow">
-                <h3>Games</h3>
-                <p>
-                    Usually something I can sink hours into, like Dark Souls,
-                    Monster Hunter, or GTA 6.
-                </p>
-            </li>
-            <li class="flow">
-                <h3>Outdoors</h3>
-                <p>
-                    When it’s nice out, I’m reading in a hammock. Plenty of
-                    evenings end around a bonfire.
-                </p>
-            </li>
-        </ul>
-    </section>
 </div>
 
 <style>
@@ -121,10 +90,6 @@
         --flow-space: var(--space-xs);
     }
 
-    .homeIntro__education {
-        color: var(--content-muted);
-    }
-
     .homeIntro__actions {
         --cluster-space: var(--space-xs)
             clamp(var(--space-md), 2vw, var(--space-lg));
@@ -138,44 +103,10 @@
         padding-block: var(--space-sm);
     }
 
-    .homeIntro__achievements {
-        --stack-space: var(--space-xs);
-        margin-left: var(--space-xs);
-        padding-left: var(--space-lg);
-        border-left: 2px solid var(--content-divider);
-        list-style: disc;
-    }
-
-    .homeIntro__achievements li::marker {
-        color: var(--content-muted);
-        font-size: 0.75em;
-    }
-
     .homeInterests {
         --flow-space: var(--space-sm);
+        margin-top: var(--space-lg);
         border-top: var(--section-divider);
         padding-top: var(--space-lg);
-    }
-
-    .homeInterests__intro {
-        max-width: 60ch;
-    }
-
-    .homeInterests__list {
-        --flow-space: var(--space-lg);
-        --grid-min: 14rem;
-        padding: 0;
-        list-style: none;
-    }
-
-    .homeInterests__list li {
-        --flow-space: var(--space-xs);
-        padding-left: var(--space-md);
-        border-left: 2px solid var(--content-divider);
-    }
-
-    .homeInterests__list h3 {
-        font-size: var(--text-body);
-        font-weight: 600;
     }
 </style>
