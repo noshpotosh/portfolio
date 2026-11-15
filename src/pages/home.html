@@ -8,30 +8,12 @@
             </h2>
             <p class="homeIntro__description">
                 I'm a software engineer at Commodity &amp; Ingredient Hedging.
-                I designed the internal REST API framework our engineers build
-                on, which now runs 100+ endpoints. I also led the move to React
-                and TypeScript inside a legacy CFML platform, which included
-                building a shared library of 50+ components.
+                I designed the internal <strong>REST API framework</strong> our
+                engineers build on, which now runs <strong>100+ endpoints</strong>.
+                I also led the move to <strong>React and TypeScript</strong>
+                inside a legacy CFML platform, which included building a shared
+                library of <strong>50+ components</strong>.
             </p>
-
-            <section class="homeInterests flow" aria-labelledby="home-interests-heading">
-                <h2 id="home-interests-heading" class="section-heading">
-                    Outside of work
-                </h2>
-                <p>
-                    A lot of what I build starts with things I enjoy. This site,
-                    for one, is a nod to the 2000s web I grew up on. I build
-                    split ortholinear keyboards to make typing all day more
-                    comfortable, and make jewelry from found and recycled
-                    metal using basic hand tools.
-                </p>
-                <p>
-                    When I'm playing games, it's usually something I can sink
-                    hours into, like Dark Souls, Monster Hunter, or GTA 6.
-                    When it’s nice out, I’m reading in a hammock. Plenty of
-                    evenings end around a bonfire.
-                </p>
-            </section>
 
             <ul class="homeIntro__actions cluster">
                 <li>
@@ -59,8 +41,23 @@
         </section>
 
         <cf-include src="./components/featured-project.html"></cf-include>
-    </div>
 
+        <section
+            class="homeInterests flow"
+            aria-labelledby="home-interests-heading"
+        >
+            <h2 id="home-interests-heading" class="section-heading">
+                Outside of work
+            </h2>
+            <p>
+                A lot of what I build starts with things I enjoy. This site,
+                for one, is a nod to the 2000s web I grew up on. I build
+                split ortholinear keyboards to make typing all day more
+                comfortable, and make jewelry from found and recycled
+                metal using basic hand tools.
+            </p>
+        </section>
+    </div>
 </div>
 
 <style>
@@ -68,11 +65,13 @@
     #home-view {
         --stack-space: var(--content-spacing);
         min-height: 100%;
+        container-type: inline-size;
     }
 
     .home-overview {
         --grid-space: var(--content-spacing);
         --grid-align: start;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .homeIntro {
@@ -105,8 +104,22 @@
 
     .homeInterests {
         --flow-space: var(--space-sm);
-        margin-top: var(--space-lg);
         border-top: var(--section-divider);
         padding-top: var(--space-lg);
+    }
+    @container (min-width: 38rem) {
+        .home-overview {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            row-gap: var(--space-lg);
+        }
+
+        .home-overview > .featuredProject {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+        }
+
+        .homeInterests {
+            grid-column: 1;
+        }
     }
 </style>
