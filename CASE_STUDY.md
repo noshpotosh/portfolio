@@ -22,11 +22,19 @@ Those things are force multipliers. Pre-AI, I don't think I'd have landed on som
 
 ## How it evolved
 
-A few of the early AI mockups, exploring the console-shell idea and what goes inside it:
+The early AI mockups went in a few very different directions. First, a quiet, editorial-style personal site:
 
-![AI mockup: a dense "workbench" homepage inside a console-shaped frame](.github/case-study/01-mockup-workbench.jpg)
-![AI mockup: pixel-art player-profile homepage](.github/case-study/02-mockup-player-profile.jpg)
-![AI mockup: a 2000s software-skin take on the shell](.github/case-study/03-mockup-software-skin.jpg)
+![AI mockup: an editorial-style portfolio with an ivory background, serif headline, and simple project rows](.github/case-study/01-mockup-editorial.jpg)
+
+Then a portfolio styled like an old desktop application:
+
+![AI mockup: a desktop-window portfolio with a blue title bar, beveled controls, and a two-column project layout](.github/case-study/02-mockup-desktop-window.jpg)
+
+After ruling those two directions out, I found the inspiration that set the direction for the site: Nintendo's website from the 2000s. That was the starting point for exploring a more playful, console-like frame.
+
+This early shell concept had a boxier shape, clipped corners, and an angular inset around the activity panel:
+
+![AI mockup: a boxy blue console shell with clipped corners, a narrow left rail, and an angular activity panel](.github/case-study/03-mockup-chrome-showcase.jpg)
 
 The standalone page I used to dial in the shell's shape, next to the first coded version of the shell (still full of placeholder content):
 
