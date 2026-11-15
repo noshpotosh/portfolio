@@ -1,12 +1,10 @@
 ## The short version
 
-This is my portfolio, and the site you're probably reading this on. I wanted a home base I actually love: one place to see my most complete projects, styled like a handheld console I'd have been obsessed with as a kid. Most of the content that changes often, like projects, case studies, and recent activity, loads straight from my GitHub. When I push a project, it shows up here without me touching the site. It's built with [CFJS](https://github.com/noshpotosh/cfjs), the tiny HTML composition library I've been developing alongside it.
+This is my portfolio, and the site you're probably reading this on. My hope is that having a place I'm excited to share them will motivate me to push through the hardest part of software development: the last 20%. Most of the content that changes often, like projects, case studies, and recent activity, loads straight from my GitHub. When I push a project, it shows up here without me touching the site.
 
 ## Why I built it
 
-I didn't want a portfolio I'd build once and forget. I wanted a site I'd be excited to put projects on, one that feels like *mine* and not a template with my name swapped in.
-
-Pulling content from GitHub turned out to be the best decision I made. Each project's description, icon, and this exact case study live in that project's own repo. The site just goes and gets them. Honestly, that's become a motivator in its own right. Knowing a finished project will show up here on its own makes me want to keep shipping.
+I didn't want a portfolio I'd build once and forget, like something that was just a template with my name swapped in. I wanted a site I'd be excited to put projects on, one that feels like *mine*. One I could evolve and grow wherever my whims take me... I also needed a reason to finally finish the first stable version of [CFJS](https://github.com/noshpotosh/cfjs), the tiny HTML composition library I've been toying around with.
 
 ## Iterating with AI
 
@@ -22,11 +20,19 @@ Those things are force multipliers. Pre-AI, I don't think I'd have landed on som
 
 ## How it evolved
 
-A few of the early AI mockups, exploring the console-shell idea and what goes inside it:
+The early AI mockups went in a few very different directions. First, a quiet, editorial-style personal site:
 
-![AI mockup: a dense "workbench" homepage inside a console-shaped frame](.github/case-study/01-mockup-workbench.jpg)
-![AI mockup: pixel-art player-profile homepage](.github/case-study/02-mockup-player-profile.jpg)
-![AI mockup: a 2000s software-skin take on the shell](.github/case-study/03-mockup-software-skin.jpg)
+![AI mockup: an editorial-style portfolio with an ivory background, serif headline, and simple project rows](.github/case-study/01-mockup-editorial.jpg)
+
+Then a portfolio styled like an old desktop application:
+
+![AI mockup: a desktop-window portfolio with a blue title bar, beveled controls, and a two-column project layout](.github/case-study/02-mockup-desktop-window.jpg)
+
+After ruling those two directions out, I found the inspiration that set the direction for the site: Nintendo's website from the 2000s. That was the starting point for exploring a more playful, console-like frame.
+
+This early shell concept had a boxier shape, clipped corners, and an angular inset around the activity panel:
+
+![AI mockup: a boxy blue console shell with clipped corners, a narrow left rail, and an angular activity panel](.github/case-study/03-mockup-chrome-showcase.jpg)
 
 The standalone page I used to dial in the shell's shape, next to the first coded version of the shell (still full of placeholder content):
 
